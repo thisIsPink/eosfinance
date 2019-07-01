@@ -1,0 +1,183 @@
+<html class="x-admin-sm">
+  <head>
+    <meta charset="UTF-8">
+    <title>欢迎页面-X-admin2.1</title>
+    <link rel="stylesheet" href="__BS_CSS__/font.css">
+    <link rel="stylesheet" href="__BS_CSS__/xadmin.css">
+    <script type="text/javascript" src="__P_JS__/jquery-3.2.1.min.js"></script>
+    <script type="text/javascript" src="__BS_LAY__/layui.js" charset="utf-8"></script>
+    <script type="text/javascript" src="__BS_JS__/xadmin.js"></script>
+    <script type="text/javascript" src="__BS_JS__/cookie.js"></script>
+  </head>
+  
+  <body>
+    <div class="x-nav">
+      <span class="layui-breadcrumb">
+        <a href="">超级后台</a>
+        <a href="">信息中心</a>
+        <a>
+          <cite>公告管理</cite></a>
+      </span>
+      <a class="layui-btn layui-btn-small" style="line-height:1.6em;margin-top:3px;float:right" href="javascript:location.replace(location.href);" title="刷新">
+        <i class="layui-icon" style="line-height:30px">ဂ</i></a>
+    </div>
+    <div class="x-body">
+      <div class="layui-row">
+        <form class="layui-form layui-col-md12 x-so" >
+          <input type="text" name="id" placeholder="ID" autocomplete="off" class="layui-input">
+          <input type="text" name="title"  placeholder="标题" autocomplete="off" class="layui-input">
+          <input type="text" name="abstract"  placeholder="摘要" autocomplete="off" class="layui-input">
+          <input class="layui-input" placeholder="开始日" name="start" id="start">
+          <input class="layui-input" placeholder="截止日" name="end" id="end">
+          <div class="layui-input-inline">
+            <select name="type">
+              <option value="">类型</option>
+              <option value="1">系统公告</option>
+              <option value="2">网站公告</option>
+            </select>
+          </div>
+          <div class="layui-input-inline">
+            <select name="state">
+              <option value="">状态</option>
+              <option value="1">正常</option>
+              <option value="2">停止</option>
+            </select>
+          </div>
+          <button class="layui-btn"  lay-submit="" lay-filter="sreach"><i class="layui-icon">&#xe615;</i></button>
+        </form>
+      </div>
+      <xblock>
+        <button class="layui-btn" onclick="x_admin_show('添加用户','notice_add')"><i class="layui-icon"></i>添加</button>
+      </xblock>
+      <table id="notice_list" lay-filter="notice_list" class="layui-table x-admin"></table>
+      <script type="text/html" id="notice_bar">
+        <a onclick="notice_stop(this,{{d.id}})" href="javascript:;"  title="{{d.state == '1' ? '正常' : d.state == '2' ? '停止' : '错误'}}"><i class="layui-icon">
+          &#{{d.state == '1' ? 'xe601' : 'xe62f' }};
+        </i></a>
+        <a onclick="x_admin_show('公告管理','notice_edit?id='+{{d.id}})" href="javascript:;"><i class="layui-icon">&#xe716;</i></a>
+      </script>
+      <script type="text/html" id="notice_state">
+        <span class="layui-btn layui-btn-normal layui-btn-mini {{d.state == '1' ? '' : 'layui-btn-disabled'}}">{{d.state == '1' ? '正常' : d.state == '2' ? '停止' : '错误'}}</span>
+      </script>
+    </div>
+    <script>
+      var state=true;
+      layui.use(['table','form','laydate'],function(){
+        var table = layui.table;
+        var laydate = layui.laydate;
+        var form = layui.form;
+        var tableIns=table.render({
+          elem: '#notice_list'
+          ,height: 470
+          ,url: 'json/notice' //数据接口
+          ,page: true //开启分页
+          ,cols: [[ //表头
+            {field: 'id', title: 'ID', width:80, sort: true}
+            ,{field: 'title', title: '标题'}
+            ,{field: 'abstract', title: '摘要'}
+            ,{field: 'time', title: '时间', sort: true,templet: '<div>{{getLocalTime(d.time)}}</div>'}
+            ,{field: 'type', title: '类型',templet: '<div>{{d.type == "1" ? "系统公告" : d.type == "2" ? "网站公告" : "错误公告" }}</div>'}
+            ,{field: 'state', title: '状态',toolbar:'#notice_state'}
+            ,{title:'操作', toolbar: '#notice_bar'}
+          ]]
+        });
+        laydate.render({
+            elem: '#start', //指定元素
+            type: 'datetime'
+        });
+        laydate.render({
+          elem: '#end', //指定元素
+          type: 'datetime'
+          ,done: function(value){
+            var start=Date.parse(new Date($('[name="start"]').val()));
+            if(new Date(value)-start<0){
+              layer.msg("结束时间不能小于开始时间");
+              return;
+            }
+          }
+        });
+        form.on('submit(sreach)', function(data){
+          if(data.field.start!=""||data.field.end!=''){
+            if(data.field.start!=""&&data.field.end!=''){
+              var start=Date.parse(new Date($('[name="start"]').val()));
+              var end=Date.parse(new Date($('[name="end"]').val()));
+              if(end-start<0){
+                layer.msg("结束时间不能小于开始时间");
+                return false;
+              }
+            }
+            if(data.field.start!=""){
+              data.field.start=Date.parse(data.field.start)/1000;
+            }
+            if(data.field.end!=""){
+              data.field.end=Date.parse(data.field.end)/1000;
+            }
+          }
+          tableIns.reload({
+            where: data.field
+            ,page: {
+              curr: 1 
+            }
+          });
+          return false; 
+        });
+      })
+       /*用户-停用*/
+      function notice_stop(obj,id){
+        if($(obj).attr('title')=='正常'){
+          layer.confirm('确认要停用吗？',function(index){
+            //发异步把用户状态进行更改
+            if(state){
+              state=false;
+              $.ajax({
+                url: 'sub/notice_state_down',
+                type: 'post',
+                dataType: 'json',
+                data: {"id": id},
+                success:function(msg){
+                  state=true;
+                  if(msg.flag=="true"){
+                    $(obj).attr('title','停止')
+                    $(obj).find('i').html('&#xe62f;');
+                    $(obj).parents("tr").find("[data-field='state']").find('span').addClass('layui-btn-disabled').html('停止');
+                    layer.msg('已停止!',{icon: 5,time:1000});
+                  }
+                }
+              });
+            }
+          });
+        }else if($(obj).attr('title')=='停止'){
+          layer.confirm('确认要启用吗？',function(index){
+            if(state){
+              state=false;
+              $.ajax({
+                url: 'sub/notice_state_up',
+                type: 'post',
+                dataType: 'json',
+                data: {"id": id},
+                success:function(msg){
+                  state=true;
+                  if(msg.flag=='true'){
+                    $(obj).attr('title','正常')
+                    $(obj).find('i').html('&#xe601;');
+                    $(obj).parents("tr").find("[data-field='state']").find('span').removeClass('layui-btn-disabled').html('正常');
+                    layer.msg('已启用!',{icon: 1,time:1000});
+                  }
+                }
+              });
+            }
+          });
+        }else{
+          layer.msg('请联系管理员!',{icon: 2,time:1000});
+        }
+      }
+      function getLocalTime(nS) {  
+        if(nS==null||nS==''){
+          return '无';
+        }   
+         return new Date(parseInt(nS) * 1000).toLocaleString().replace(/:\d{1,2}$/,' ');  
+      }
+    </script>
+  </body>
+
+</html>

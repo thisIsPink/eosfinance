@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>sel测试</title>
+	<link rel="stylesheet" href="__BS_CSS__/font.css">
+    <link rel="stylesheet" href="__BS_CSS__/xadmin.css">
+    <script type="text/javascript" src="__P_JS__/jquery-3.2.1.min.js"></script>
+    <script type="text/javascript" src="__BS_LAY__/layui.js" charset="utf-8"></script>
+    <style>
+    	xmp{white-space:normal;}
+    </style>
+</head>
+<body>
+	<table class="layui-table">
+		<colgroup>
+			<col width="120">
+			<col width="200">
+			<col width="200">
+			<col width="400">
+			<col width="400">
+			<col width="100">
+		</colgroup>
+		<thead>
+			<tr>
+				<th>功能</th>
+				<th>地址</th>
+				<th>传参</th>
+				<th>输入测试</th>
+				<th>返回内容</th>
+				<th>发送</th>
+			</tr> 
+		</thead>
+		<tbody>
+			<tr>
+				<td>首页轮播</td>
+				<td>sel/msg/wheel_img</td>
+				<td>number(条数)</td>
+				<td><input type="text" name="text" autocomplete="off" class="layui-input test_url" value="<{:url('sel/msg/wheel_img')}>?number=3"></td>
+				<td><xmp class="content"></xmp></td>
+				<th><button class="layui-btn" onclick="sub(this)">点我测试</button></th>
+			</tr>
+			<tr>
+				<td>标列表</td>
+				<td>sel/msg/credit_bid</td>
+				<td>page(页数),limit(条数[默认6条])</td>
+				<td><input type="text" name="text" autocomplete="off" class="layui-input test_url" value="<{:url('sel/msg/credit_bid?page=1&limit=3')}>"></td>
+				<td><xmp class="content"></xmp></td>
+				<th><button class="layui-btn" onclick="sub(this)">点我测试</button></th>
+			</tr>
+			<tr>
+				<td>标总数</td>
+				<td>sel/msg/sum_bid</td>
+				<td>无</td>
+				<td><input type="text" name="text" autocomplete="off" class="layui-input test_url" value="<{:url('sel/msg/sum_bid')}>"></td>
+				<td><xmp class="content"></xmp></td>
+				<th><button class="layui-btn" onclick="sub(this)">点我测试</button></th>
+			</tr>
+			<tr>
+				<td>标详细</td>
+				<td>sel/msg/bid_info</td>
+				<td>传入标ID(由credit_bid获取)</td>
+				<td><input type="text" name="text" autocomplete="off" class="layui-input test_url" value="<{:url('sel/msg/bid_info?id=2')}>"></td>
+				<td><xmp class="content"></xmp></td>
+				<th><button class="layui-btn" onclick="sub(this)">点我测试</button></th>
+			</tr>
+			<tr>
+				<td>标详情与信息</td>
+				<td>sel/msg/bid_details</td>
+				<td>传入标ID(由credit_bid获取)</td>
+				<td><input type="text" name="text" autocomplete="off" class="layui-input test_url" value="<{:url('sel/msg/bid_details?id=2')}>"></td>
+				<td><xmp class="content"></xmp></td>
+				<th><button class="layui-btn" onclick="sub(this)">点我测试</button></th>
+			</tr>
+			<tr>
+				<td>投标记录</td>
+				<td>sel/msg/bid_recode</td>
+				<td>传入标ID(由credit_bid获取)[page(页数[默认第一页]),limit(条数[默认100条])]</td>
+				<td><input type="text" name="text" autocomplete="off" class="layui-input test_url" value="<{:url('sel/msg/bid_recode?id=2')}>"></td>
+				<td><xmp class="content"></xmp></td>
+				<th><button class="layui-btn" onclick="sub(this)">点我测试</button></th>
+			</tr>
+			<tr>
+				<td>标还款周期</td>
+				<td>sel/msg/bid_cycle</td>
+				<td>传入标ID(由credit_bid获取)[page(页数[默认第一页]),limit(条数[默认100条])]</td>
+				<td><input type="text" name="text" autocomplete="off" class="layui-input test_url" value="<{:url('sel/msg/bid_cycle?id=2')}>"></td>
+				<td><xmp class="content"></xmp></td>
+				<th><button class="layui-btn" onclick="sub(this)">点我测试</button></th>
+			</tr>
+			<tr>
+				<td>公告</td>
+				<td>sel/msg/notice</td>
+				<td>page(页数[默认第一页]),limit(条数[默认16条])</td>
+				<td><input type="text" name="text" autocomplete="off" class="layui-input test_url" value="<{:url('sel/msg/notice?page=1&limit=20')}>"></td>
+				<td><xmp class="content"></xmp></td>
+				<th><button class="layui-btn" onclick="sub(this)">点我测试</button></th>
+			</tr>
+			<tr>
+				<td>公告详情</td>
+				<td>sel/msg/notice_info</td>
+				<td>Id</td>
+				<td><input type="text" name="text" autocomplete="off" class="layui-input test_url" value="<{:url('sel/msg/notice_info?id=1')}>"></td>
+				<td><xmp class="content"></xmp></td>
+				<th><button class="layui-btn" onclick="sub(this)">点我测试</button></th>
+			</tr>
+			<tr>
+				<td>关于我们</td>
+				<td>sel/msg/about</td>
+				<td>无</td>
+				<td><input type="text" name="text" autocomplete="off" class="layui-input test_url" value="<{:url('sel/msg/about')}>"></td>
+				<td><xmp class="content"></xmp></td>
+				<th><button class="layui-btn" onclick="sub(this)">点我测试</button></th>
+			</tr>
+			<tr>
+				<td>理财中心</td>
+				<td>sel/msg/help_financial</td>
+				<td>无</td>
+				<td><input type="text" name="text" autocomplete="off" class="layui-input test_url" value="<{:url('sel/msg/help_financial')}>"></td>
+				<td><xmp class="content"></xmp></td>
+				<th><button class="layui-btn" onclick="sub(this)">点我测试</button></th>
+			</tr>
+			<tr>
+				<td>操作流程</td>
+				<td>sel/msg/help_operation</td>
+				<td>无</td>
+				<td><input type="text" name="text" autocomplete="off" class="layui-input test_url" value="<{:url('sel/msg/help_operation')}>"></td>
+				<td><xmp class="content"></xmp></td>
+				<th><button class="layui-btn" onclick="sub(this)">点我测试</button></th>
+			</tr>
+			<tr>
+				<td>账户问题</td>
+				<td>sel/msg/help_account</td>
+				<td>无</td>
+				<td><input type="text" name="text" autocomplete="off" class="layui-input test_url" value="<{:url('sel/msg/help_account')}>"></td>
+				<td><xmp class="content"></xmp></td>
+				<th><button class="layui-btn" onclick="sub(this)">点我测试</button></th>
+			</tr>
+			<tr>
+				<td>安全问题</td>
+				<td>sel/msg/help_security</td>
+				<td>无</td>
+				<td><input type="text" name="text" autocomplete="off" class="layui-input test_url" value="<{:url('sel/msg/help_security')}>"></td>
+				<td><xmp class="content"></xmp></td>
+				<th><button class="layui-btn" onclick="sub(this)">点我测试</button></th>
+			</tr>
+			<tr>
+				<td>成交金额EOS</td>
+				<td>sel/msg/trading_amount</td>
+				<td>无</td>
+				<td><input type="text" name="text" autocomplete="off" class="layui-input test_url" value="<{:url('sel/msg/trading_amount')}>"></td>
+				<td><xmp class="content"></xmp></td>
+				<th><button class="layui-btn" onclick="sub(this)">点我测试</button></th>
+			</tr>
+			<tr>
+				<td>收益金额EOS</td>
+				<td>sel/msg/areate_amount</td>
+				<td>无</td>
+				<td><input type="text" name="text" autocomplete="off" class="layui-input test_url" value="<{:url('sel/msg/areate_amount')}>"></td>
+				<td><xmp class="content"></xmp></td>
+				<th><button class="layui-btn" onclick="sub(this)">点我测试</button></th>
+			</tr>
+			<tr>
+				<td>已还本金EOS</td>
+				<td>sel/msg/repayment</td>
+				<td>无</td>
+				<td><input type="text" name="text" autocomplete="off" class="layui-input test_url" value="<{:url('sel/msg/repayment')}>"></td>
+				<td><xmp class="content"></xmp></td>
+				<th><button class="layui-btn" onclick="sub(this)">点我测试</button></th>
+			</tr>
+			<tr>
+				<td>投资消息</td>
+				<td>sel/msg/investment_msg</td>
+				<td>无</td>
+				<td><input type="text" name="text" autocomplete="off" class="layui-input test_url" value="<{:url('sel/msg/investment_msg')}>"></td>
+				<td><xmp class="content"></xmp></td>
+				<th><button class="layui-btn" onclick="sub(this)">点我测试</button></th>
+			</tr>
+		</tbody>
+	</table>
+	<script type="text/javascript">
+		function sub(obj){
+			var url=$((obj)).closest("tr").find(".test_url").val();
+			$.ajax({
+				url: url,
+				type: 'post',
+				success:function(msg){
+					$((obj)).closest("tr").find(".content").html(msg)
+				}
+			});
+			
+		}
+	</script>
+</body>
+</html>

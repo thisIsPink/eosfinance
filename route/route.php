@@ -1,0 +1,173 @@
+<?php
+//前台路由
+Route::rule('eos_money','api/api/eos_money','GET');
+Route::rule('api/api/create','api/api/create','GET');//邀请图片
+Route::group('api',function(){
+	//基础信息
+	Route::rule('index','api/api/index','GET');//首页信息
+	Route::rule('about','api/api/about','GET');//关于我们
+	Route::rule('bid_list','api/api/bid_list','GET');//表列表
+	Route::rule('bid_info','api/api/bid_info','GET');//表详情
+	Route::rule('help','api/api/help','GET');//帮助页面
+	Route::rule('ranking','api/api/ranking','GET');//收益排行
+	Route::rule('historical_record','api/api/historical_record','GET');//交易记录
+	Route::rule('recharge','api/api/recharge','GET');//公司账户充值信息
+	Route::rule('per_order','api/api/per_order','GET');//获取用户余额
+    Route::rule('charge_img','api/api/charge_img','GET');//充值二维码
+    Route::rule('agent_img','api/api/agent_img','GET');//代理人充值二维码
+	//登陆信息
+	Route::rule('get_code','api/login/get_code','POST');//注册验证码
+	Route::rule('reg','api/login/reg','POST');//注册
+	Route::rule('login','api/login/login','POST');//登陆
+	Route::rule('message','api/login/message','GET');//消息及公告
+    Route::post('lock_msg','api/login/lock_msg');//查看消息
+	Route::rule('notice_info','api/login/notice_info','GET');//公告详情
+	//登陆后信息
+	Route::rule('center','api/security/center','GET');//账户中心
+	Route::rule('cooperation','api/security/cooperation','POST');//招商合作
+	Route::rule('inviation','api/security/inviation','GET');//邀请好友
+  		
+	Route::rule('inviation_friend_ranking','api/security/inviation_friend_ranking','GET');//好友排行
+	Route::rule('nick','api/security/nick','POST');//设置昵称
+	Route::rule('ver_pay_pwd','api/security/ver_pay_pwd','POST');//验证支付密码
+	Route::rule('phone_code','api/security/phone_code','POST');//获取手机验证码
+	Route::rule('email_code','api/security/email_code','POST');//获取邮箱验证码
+	Route::rule('pwd','api/security/pwd','POST');//登陆修改密码
+	Route::rule('set_repay_pwd','api/security/set_repay_pwd','POST');//设置支付密码
+	Route::rule('edit_pe','api/security/edit_pe','POST');//确认修改手机或邮箱
+	Route::rule('investment','api/security/investment','POST');//投标
+	Route::rule('reflect','api/security/reflect','POST');//提币
+	Route::rule('investment_record','api/api/investment_record','GET');//用户个人投资记录
+	Route::rule('set_auto','api/security/set_auto','POST');//设置自动投标
+	Route::rule('sign_out','api/security/sign_out','POST');//退出登陆
+    Route::rule('super_apply_add','api/security/super_apply_add','POST');//超级代理人加入
+})->header([
+    	'Access-Control-Allow-Origin'=>'http://192.168.2.199:8080',
+    	'Access-Control-Allow-Methods'=>'GET, POST',
+    	'Access-Control-Allow-Headers'=>'token,Authorization,DNT,X-Mx-ReqToken,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type, Accept-Language, Origin, Accept-Encoding',
+        'Access-Control-Allow-Credentials' => 'true',
+    ])->allowCrossDomain();
+
+
+
+//后台
+Route::rule('admin/','admin/index/login','GET');//登陆
+Route::group('admin',function(){
+		
+	Route::rule('login/ver','admin/sub/admin_ver','POST');//登陆
+	Route::rule('admin_out','admin/sub/admin_out','POST');//退出
+	if(session("admin")){
+	//基础信息页面
+		Route::rule('welcome','admin/index/welcome','GET');
+		Route::rule('index','admin/index/index','GET');//首页
+		Route::rule('member_list','admin/index/member_list','GET');//首页
+		Route::rule('member_login_log','admin/index/member_login_log','GET');//用户登陆日志
+		Route::rule('inviter','admin/index/inviter','GET');
+		Route::rule('super_user','admin/index/super_user','GET');
+		Route::rule('super_user_add','admin/index/super_user_add','GET');
+		Route::rule('order_list','admin/index/order_list','GET');//表列表
+		Route::rule('bid_add','admin/index/bid_add','GET');//添加标
+		Route::rule('bid_edit','admin/index/bid_edit','GET');//编辑标
+		Route::rule('bid_tender_record','admin/index/bid_tender_record','GET');
+		Route::rule('profit','admin/index/profit','GET');
+		Route::rule('repay','admin/index/repay','GET');
+		Route::rule('coin','admin/index/coin','GET');
+		Route::rule('coin_add','admin/index/coin_add','GET');//添加标
+		Route::rule('notice','admin/index/notice','GET');
+		Route::rule('notice_add','admin/index/notice_add','GET');
+		Route::rule('notice_edit','admin/index/notice_edit','GET');
+		Route::rule('notify','admin/index/notify','GET');
+		Route::rule('admin_list','admin/index/admin_list','GET');
+		Route::rule('admin_add','admin/index/admin_add','GET');
+		Route::rule('company','admin/index/company','GET');
+		Route::rule('wheel_img','admin/index/wheel_img','GET');
+		Route::rule('about','admin/index/about','GET');
+		Route::rule('help_info','admin/index/help_info','GET');
+		Route::rule('binding','admin/index/binding','GET');
+		Route::rule('recharge','admin/index/recharge','GET');
+		Route::rule('cash','admin/index/cash','GET');
+		Route::rule('help_manage','admin/index/help_manage','GET');
+        Route::rule('cooperation','admin/index/cooperation','GET');
+        Route::rule('super_apply','admin/index/super_apply','GET');
+	//基本信息
+	
+		Route::rule('json/user','admin/json/user','GET');//会员查看列表
+		Route::rule('json/user_log','admin/json/user_log','GET');//用户登陆日志
+		Route::rule('json/inviter','admin/json/inviter','GET');//邀请情况
+		Route::rule('json/super_user','admin/json/super_user','GET');//超级邀请人管理
+		Route::rule('json/bid','admin/json/bid','GET');//表列表
+		Route::rule('json/coin_list','admin/json/coin_list','POST');//货币列表
+		Route::rule('json/bid_tender_record','admin/json/bid_tender_record','GET');//分利情况
+		Route::rule('json/profit','admin/json/profit','GET');
+		Route::rule('json/repay','admin/json/repay','GET');
+		Route::rule('json/coin','admin/json/coin','GET');
+		Route::rule('json/notice','admin/json/notice','GET');
+		Route::rule('json/notify','admin/json/notify','GET');
+		Route::rule('json/admin_list','admin/json/admin_list','GET');
+		Route::rule('json/wheel_img','admin/json/wheel_img','GET');
+		Route::rule('json/help','admin/json/help','GET');
+		Route::rule('json/help','admin/json/help','GET');
+		Route::rule('json/binding','admin/json/binding','GET');
+		Route::rule('json/recharge','admin/json/recharge','GET');
+		Route::rule('json/cash','admin/json/cash','GET');
+        Route::rule('json/cooperation','admin/json/cooperation','GET');
+        Route::rule('json/super_apply','admin/json/super_apply','GET');
+	}
+	//提交信息
+	if(session("admin")){
+		Route::rule('sub/user_state_down','admin/sub/user_state_down','POST');//冻结用户
+		Route::rule('sub/user_state_up','admin/sub/user_state_up','PSOT');//启用用户
+		Route::rule('sub/send_out','admin/sub/send_out','POST');	//给用户发送消息
+		Route::rule('sub/user_msg_recode','admin/sub/user_msg_recode','POST');	//查看用户发送过的信息
+		Route::rule('sub/super_state_down','admin/sub/super_state_down','POST');//
+		Route::rule('sub/super_state_up','admin/sub/super_state_up','POST');
+		Route::rule('sub/bid_state_edit','admin/sub/bid_state_edit','POST');
+		Route::rule('sub/bid_add','admin/sub/bid_add','POST');
+		Route::rule('sub/bid_edit','admin/sub/bid_edit','POST');
+		Route::rule('sub/profit_state_ok','admin/sub/profit_state_ok','POST');
+		Route::rule('sub/repay_state_ok','admin/sub/repay_state_ok','POST');
+		Route::rule('sub/coin_edit','admin/sub/coin_edit','POST');
+		Route::rule('sub/coin_edit_amount','admin/sub/coin_edit_amount','POST');
+		Route::rule('sub/coin_state_down','admin/sub/coin_state_down','POST');
+		Route::rule('sub/coin_state_up','admin/sub/coin_state_up','POST');
+		Route::rule('sub/coim_repay_edit_img','admin/sub/coim_repay_edit_img','POST');
+		Route::rule('sub/notice_state_down','admin/sub/notice_state_down','POST');
+		Route::rule('sub/notice_state_up','admin/sub/notice_state_up','POST');
+		Route::rule('sub/notice_add','admin/sub/notice_add','POST');
+		Route::rule('sub/notice_edit','admin/sub/notice_edit','POST');
+		Route::rule('sub/notify_del','admin/sub/notify_del','POST');
+		Route::rule('sub/notify_add','admin/sub/notify_add','POST');
+		Route::rule('sub/admin_state_down','admin/sub/admin_state_down','POST');
+		Route::rule('sub/admin_state_up','admin/sub/admin_state_up','POST');
+		Route::rule('sub/admin_del','admin/sub/admin_del','POST');
+		Route::rule('sub/admin_add','admin/sub/admin_add','POST');
+		Route::rule('sub/company_edit_acconut','admin/sub/company_edit_acconut','POST');
+		Route::rule('sub/company_edit_qq','admin/sub/company_edit_qq','POST');
+		Route::rule('sub/company_edit_phone','admin/sub/company_edit_phone','POST');
+		Route::rule('sub/income_edit','admin/sub/income_edit','POST');
+		Route::rule('sub/company_edit_img','admin/sub/company_edit_img','POST');
+		Route::rule('sub/wheel_img_upload','admin/sub/wheel_img_upload','POST');
+		Route::rule('sub/img_edit','admin/sub/img_edit','POST');
+		Route::rule('sub/img_del','admin/sub/img_del','POST');
+		Route::rule('sub/about_edit','admin/sub/about_edit','POST');
+		Route::rule('sub/help_del','admin/sub/help_del','POST');
+		Route::rule('sub/help_add','admin/sub/help_add','POST');
+		Route::rule('sub/help_info','admin/sub/help_info','POST');
+		Route::rule('sub/help_edit','admin/sub/help_edit','POST');
+		Route::rule('sub/help_img_edit','admin/sub/help_img_edit','POST');
+		Route::rule('sub/binding_state_ok','admin/sub/binding_state_ok','POST');
+		Route::rule('sub/recharge_state_ok','admin/sub/recharge_state_ok','POST');
+		Route::rule('sub/cash_state_ok','admin/sub/cash_state_ok','POST');
+		Route::rule('sub/super_add','admin/sub/super_add','POST');
+		Route::rule('sub/about_img','admin/sub/about_img','POST');
+		Route::rule('sub/super_propor','admin/sub/super_propor','POST');
+     	Route::rule('json/user_msg_recode','admin/json/user_msg_recode','POST');
+		Route::rule('sub/help_img_edit','admin/sub/help_img_edit','POST');
+        Route::rule('sub/super_apply','admin/sub/super_apply','POST');
+	}
+});
+Route::get('api','api/api/api');
+Route::miss(function(){
+	return json_encode(["code"=>420,"msg"=>'404',"data"=>[]]);
+});
+?>

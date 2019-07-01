@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html class="x-admin-sm">
+  
+  <head>
+    <meta charset="UTF-8">
+    <title>欢迎页面-X-admin2.1</title>
+    <link rel="stylesheet" href="__BS_CSS__/font.css">
+    <link rel="stylesheet" href="__BS_CSS__/xadmin.css">
+    <script type="text/javascript" src="__P_JS__/jquery-3.2.1.min.js"></script>
+    <script type="text/javascript" src="__BS_LAY__/layui.js" charset="utf-8"></script>
+    <script type="text/javascript" src="__BS_JS__/xadmin.js"></script>
+    <script type="text/javascript" src="__BS_JS__/cookie.js"></script>
+  </head>
+  
+  <body>
+    <tool>
+      <form id="financa_add" style="display: none">
+        <div class="layui-form-item">
+          <label class="layui-form-label">标题</label>
+          <div class="layui-input-block">
+            <input type="text" name="title" required  lay-verify="required" placeholder="请输入标题" autocomplete="off" class="layui-input input_text">
+          </div>
+        </div>
+        <div class="layui-form-item">
+          <label class="layui-form-label">内容</label>
+          <div class="layui-input-block">
+            <textarea id="content" style="display: none;"></textarea>
+          </div>
+        </div>
+        <div class="layui-form-item">
+          <div class="layui-input-block">
+            <button class="layui-btn" lay-submit lay-filter="add">提交</button>
+          </div>
+        </div>
+      </form>
+      <form id="financa_edit" style="display: none">
+        <div class="layui-form-item">
+          <label class="layui-form-label">标题</label>
+          <div class="layui-input-block">
+            <input type="text" name="title" required  lay-verify="required" placeholder="请输入标题" autocomplete="off" class="layui-input input_text">
+          </div>
+        </div>
+        <div class="layui-form-item">
+          <label class="layui-form-label">内容</label>
+          <div class="layui-input-block">
+            <textarea id="content_edit" style="display: none;"></textarea>
+          </div>
+        </div>
+        <div class="layui-form-item">
+          <div class="layui-input-block">
+            <button class="layui-btn" lay-submit lay-filter="edit">提交</button>
+          </div>
+        </div>
+      </form>
+    </tool>
+    <div class="x-nav">
+      <span class="layui-breadcrumb">
+        <a href="">超级后台</a>
+        <a href="">帮助中心</a>
+        <a>
+          <cite>关于我们</cite></a>
+      </span>
+      <a class="layui-btn layui-btn-small" style="line-height:1.6em;margin-top:3px;float:right" href="javascript:location.replace(location.href);" title="刷新">
+        <i class="layui-icon" style="line-height:30px">ဂ</i></a>
+    </div>
+    <div class="x-body">
+      <xblock>
+        <button class="layui-btn" onclick="add_recode()"><i class="layui-icon"></i>添加</button>
+      </xblock>
+      <table class="layui-table" id="notify_list"></table>
+      <script type="text/html" id="notify_bar">
+         <a onclick="edit('{{d.id}}')" href="javascript:;" class="layui-btn">编辑内容</a>
+         <a onclick="del('{{d.id}}')" href="javascript:;" class="layui-btn layui-btn-danger">删除</a>
+      </script>
+    </div>
+    <script>
+      var state=true;
+      layui.use("table",function(){
+        var table = layui.table;
+        var tableIns=table.render({
+            elem: '#notify_list'
+            ,height: 420
+            ,url: 'json/help?type='+GetQueryString('type') //数据接口
+            ,page: true //开启分页
+            ,cols: [[ //表头
+              {field: 'title', title: '标题'}
+              ,{title:'操作', toolbar: '#notify_bar'}
+            ]]
+          });
+      })
+      function del(id) {
+        layer.confirm('确认要删除吗？',function(index){
+          $.ajax({
+            url: 'sub/help_del',
+            type: 'post',
+            dataType: 'json',
+            data: {"id":id},
+            success:function(msg){
+              if(msg.flag=="true"){
+                layer.msg("删除成功");
+                location.replace(location.href);
+              }else{
+                layer.msg(msg.msg);
+              }
+            }
+          });
+        })
+      }
+      function add_recode(){
+        layui.use(['layer','form','layedit'], function(){
+          var layer = layui.layer;
+          var form = layui.form;
+          var layedit = layui.layedit;
+          form.on('submit(add)', function(data){
+            var title=$("#financa_add .input_text").val();
+            var content=layedit.getContent(buile_details);
+            if(title==''){
+              layer.msg("请输入标题");
+              return false;
+            }
+            if(content==''){
+              layer.msg("请输入标题");
+              return false;
+            }
+            if(state){
+              stete=false;
+              $.ajax({
+                url: 'sub/help_add',
+                type: 'post',
+                dataType: 'json',
+                data: {"title": title,"content":content,"type":GetQueryString('type')},
+                success:function(msg){
+                  state=true;
+                  if(msg.flag=="true"){
+                    layer.msg("添加成功",{time:1200,icon: 6},function(){
+                      location.replace(location.href);
+                    });
+                  }else{
+                    layer.msg(msg.msg);
+                  }
+                }
+              });
+            }
+
+            return false; //阻止表单跳转。如果需要表单跳转，去掉这段即可。
+          });
+          layer.open({
+            type: 1, 
+            content: $("#financa_add"),
+            area: ["620","400px"]
+          });
+          layedit.set({
+            uploadImage: {
+              url: 'sub/help_img_edit' //接口url
+              ,type: 'post' //默认post
+            }
+          });
+          var buile_details=layedit.build('content',{tool: [
+            'strong' //加粗
+            ,'italic' //斜体
+            ,'underline' //下划线
+            ,'del' //删除线
+            ,'|' //分割线
+            ,'left' //左对齐
+            ,'center' //居中对齐
+            ,'right' //右对齐
+            ,'link' //超链接
+            ,'unlink' //清除链接
+            ,'image' //插入图片
+            ,'face' //表情
+          ]}); //建立编辑器
+        });
+      }
+      function edit(id){
+        layui.use(['layer','form','layedit'], function(){
+          var layer = layui.layer;
+          var form = layui.form;
+          var layedit = layui.layedit;
+          $.ajax({
+            url: 'sub/help_info',
+            type: 'post',
+            dataType: 'json',
+            data: {"id": id},
+            success:function(msg){
+              if(msg.flag=="true"){
+                $("#financa_edit [name='title']").val(msg.data.title);
+                $("#content_edit").text(msg.data.content);
+                var index=layer.open({
+                  type: 1, 
+                  content: $("#financa_edit"),
+                  area: ["620","400px"]
+                });
+                form.on('submit(edit)', function(data){
+                  var title=$("#financa_edit .input_text").val();
+                  var content=layedit.getContent(buile_details);
+                  if(title==''){
+                    layer.msg("请输入标题");
+                    return false;
+                  }
+                  if(content==''){
+                    layer.msg("请输入标题");
+                    return false;
+                  }
+                  if(state){
+                    state=false;
+                    $.ajax({
+                      url: 'sub/help_edit',
+                      type: 'post',
+                      dataType: 'json',
+                      data: {"id":id,"title": title,"content":content},
+                      success:function(msg){
+                        state=true;
+                        if(msg.flag=="true"){
+                          layer.msg("修改成功",{time:1200,icon: 6},function(){
+                            layer.close(index);
+                            window.location.reload();//页面刷新
+                          });
+                        }else{
+                          layer.msg(msg.msg);
+                        }
+                      }
+                    });
+                  }
+                  return false; //阻止表单跳转。如果需要表单跳转，去掉这段即可。
+                });
+                layedit.set({
+                  uploadImage: {
+                    url: 'sub/help_img_edit' //接口url
+                  }
+                });
+                var buile_details=layedit.build('content_edit',{tool: [
+                  'strong' //加粗
+                  ,'italic' //斜体
+                  ,'underline' //下划线
+                  ,'del' //删除线
+                  ,'|' //分割线
+                  ,'left' //左对齐
+                  ,'center' //居中对齐
+                  ,'right' //右对齐
+                  ,'link' //超链接
+                  ,'unlink' //清除链接
+                  ,'image' //插入图片
+                  ,'face' //表情
+                ]}); //建立编辑器
+              }else{
+                layer.msg(msg.msg);
+              }
+            }
+          })
+          
+        });
+      }
+      function GetQueryString(name){
+        var reg = new RegExp("(^|&)"+ name +"=([^&]*)(&|$)");
+        var r = window.location.search.substr(1).match(reg);
+        if(r!=null)return unescape(r[2]); return null;
+      }
+    </script>
+  </body>
+
+</html>

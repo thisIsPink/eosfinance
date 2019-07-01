@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html class="x-admin-sm">
+  
+  <head>
+    <meta charset="UTF-8">
+    <title>欢迎页面-X-admin2.1</title>
+    <link rel="stylesheet" href="__BS_CSS__/font.css">
+    <link rel="stylesheet" href="__BS_CSS__/xadmin.css">
+    <script type="text/javascript" src="__P_JS__/jquery-3.2.1.min.js"></script>
+    <script type="text/javascript" src="__BS_LAY__/layui.js" charset="utf-8"></script>
+    <script type="text/javascript" src="__BS_JS__/xadmin.js"></script>
+    <script type="text/javascript" src="__BS_JS__/cookie.js"></script>
+  </head>
+  
+  <body>
+    <div class="x-nav">
+      <span class="layui-breadcrumb">
+        <a href="">超级后台</a>
+        <a href="">投标管理</a>
+        <a>
+          <cite>发布管理标</cite></a>
+      </span>
+      <a class="layui-btn layui-btn-small" style="line-height:1.6em;margin-top:3px;float:right" href="javascript:location.replace(location.href);" title="刷新">
+        <i class="layui-icon" style="line-height:30px">ဂ</i></a>
+    </div>
+    <div class="x-body">
+      <div class="layui-row">
+        <form class="layui-form layui-col-md12 x-so">
+          <div class="layui-input-inline">
+            范围
+            <input type="text" name="price_min" placeholder="￥" autocomplete="off" class="layui-input" style="width: 100px;" oninput='this.value=this.value.toString().match(/^\d+(?:\.\d{0,10})?/)'>
+            -
+            <input type="text" name="price_max" placeholder="￥" autocomplete="off" class="layui-input" style="width: 100px;" oninput='this.value=this.value.toString().match(/^\d+(?:\.\d{0,10})?/)'>
+          </div>
+          <input class="layui-input" placeholder="开始日" name="start" id="start">
+          <input class="layui-input" placeholder="截止日" name="end" id="end">
+          <div class="layui-input-inline">
+            <select name="coin" class="coin_list">
+              <option value="">所需货币</option>
+            </select>
+          </div>
+          <div class="layui-input-inline">
+            <select name="state">
+              <option value="">状态</option>
+              <option value="1">正常</option>
+              <option value="4">完成</option>
+              <option value="2">冻结</option>
+              <option value="3">退本金</option>
+              <option value="5">过期</option>
+              <option value="6">标已满</option>
+              <option value="7">生效中</option>
+              <option value="8">退款中</option>
+            </select>
+          </div>
+          <button class="layui-btn"  lay-submit="" lay-filter="sreach"><i class="layui-icon">&#xe615;</i></button>
+        </form>
+      </div>
+      <xblock>
+        <button class="layui-btn" onclick="x_admin_show('添加用户','bid_add')"><i class="layui-icon"></i>添加</button>
+      </xblock>
+      <table class="layui-table" id="bid_list"></table>
+      <script type="text/html" id="bid_state">
+        <span class="layui-btn {{d.state == '1' ? '' : d.state == '2' ? 'layui-btn-primary' : d.state == '3' ? 'layui-btn-warm' : d.state == '4' ? 'layui-btn-normal' : d.state == '5' ? 'layui-btn-danger' : d.state == '6' ? '' :d.state == '7' ? '' :d.state == '8' ? '' :'layui-btn-disabled'}}">{{d.state == '1' ? '正常' : d.state == '2' ? '冻结' : d.state == '3' ? '退还本金' : d.state == '4' ? '已完成' : d.state == '5' ? '过期' : d.state == '6' ? '标已满' : d.state == '7' ? '生效中' : d.state == '8' ? '退款中' : '错误' }}</span>
+      </script>
+      <script type="text/html" id="bid_bar">
+        <a onclick="bid_stop(this,{{d.id}})" href="javascript:;"  title="{{d.state == '1' ? '正常' : d.state == '2' ? '冻结' : d.state == '3' ? '退还本金' : d.state == '4' ? '已完成' : d.state == '5' ? '过期' : d.state == '6' ? '标已满' : d.state == '7' ? '生效中' : d.state == '8' ? '退款中' : '错误'}}"><i class="layui-icon">
+          &#{{d.state == '1' ? 'xe702' : d.state == '2' ? 'xe6b1' : d.state == '3' ? 'xe65e' : d.state == '4' ? 'xe605' : d.state == '5' ? 'xe664' : d.state == '6' ? 'x1005' : d.state == '7' ? 'x1005' : d.state == '8' ? 'xe659' : '错误' }};
+        </i></a>
+         <a onclick="x_admin_show('标管理','bid_edit?id='+{{d.id}})" href="javascript:;"><i class="layui-icon">&#xe716;</i></a>
+      </script>
+    </div>
+    <script>
+      layui.use(["table",'form','laydate'],function(){
+        var table = layui.table;
+        var form = layui.form;
+        var laydate = layui.laydate;
+        var tableIns=table.render({
+          elem: '#bid_list'
+          ,height: 420
+          ,url: 'json/bid' //数据接口
+          ,page: true //开启分页
+          ,cols: [[ //表头
+            {field: 'id', title: 'ID', width:120, sort: true, fixed: 'left'}
+            ,{field: 'title', title: '标题'}
+            ,{field: 'time', title: '发布时间',templet: '<div>{{getLocalTime(d.time)}}</div>'} 
+            ,{field: 'total', title: '总额',  sort: true}
+            ,{field: 'need_coin', title: '所需货币'}
+            ,{field: 'state', title: '状态',toolbar:'#bid_state'}
+            ,{title:'操作', toolbar: '#bid_bar'}
+          ]]
+        });
+        $.ajax({
+          url: 'json/coin_list',
+          type: 'post',
+          dataType: 'json',
+          success:function(msg){
+            coin=msg;
+            var str='<option value="">所需货币</option>';
+            for(a in msg){
+              str+='<option value="'+msg[a]["id"]+'">'+msg[a]["name"]+'</option>'
+            }
+            $(".coin_list").html(str);
+            form.render('select');
+          }
+        });
+        laydate.render({
+            elem: '#start', //指定元素
+            type: 'datetime'
+        });
+        laydate.render({
+          elem: '#end', //指定元素
+          type: 'datetime'
+          ,done: function(value){
+            var start=Date.parse(new Date($('[name="start"]').val()));
+            if(new Date(value)-start<0){
+              layer.msg("结束时间不能小于开始时间");
+              return;
+            }
+          }
+        });
+        form.on('submit(sreach)', function(data){
+          if(data.field.start!=""||data.field.end!=''){
+            if(data.field.start!=""&&data.field.end!=''){
+              var start=Date.parse(new Date($('[name="start"]').val()));
+              var end=Date.parse(new Date($('[name="end"]').val()));
+              if(end-start<0){
+                layer.msg("结束时间不能小于开始时间");
+                return false;
+              }
+            }
+            if(data.field.start!=""){
+              data.field.start=Date.parse(data.field.start)/1000;
+            }
+            if(data.field.end!=""){
+              data.field.end=Date.parse(data.field.end)/1000;
+            }
+          }
+          tableIns.reload({
+            where: data.field
+            ,page: {
+              curr: 1 
+            }
+          });
+          return false; 
+        });
+      })
+
+       /*用户-停用*/
+      function bid_stop(obj,id){
+        if($(obj).attr('title')=='正常'){
+          layer.msg('您想对该项目怎么操作呢怎么操作呢', {
+            time: 20000, //20s后自动关闭
+            area : '460px',
+            btn: [ '取消'],
+            yes:function(index,layero){
+              //bid_state_edit(id,4,obj);
+            },
+            btn2:function(index,layero){
+              //bid_state_edit(id,2,obj);
+            },
+            btn3:function(index,layero){
+              //bid_state_edit(id,3,obj);
+            }
+          });
+        }else if($(obj).attr('title')=='冻结'){
+          layer.confirm('确认要启用吗？',function(index){
+            bid_state_edit(id,1,obj);
+          });
+        }else if($(obj).attr('title')=='退还本金'){
+          layer.msg('退还后就不能更改啦!',{icon: 5,time:1000});
+        }else if($(obj).attr('title')=='已完成'){
+          //无操作
+        }else if($(obj).attr('title')=='过期'){
+          //无操作
+        }else if($(obj).attr('title')=='标已满'){
+          //无操作
+        }else if($(obj).attr('title')=='生效中'){
+          //无操作
+        }else if($(obj).attr('title')=='退款中'){
+          //无操作
+        }else{
+          layer.msg('请联系管理员!',{icon: 2,time:1000});
+        }
+      }
+      function getLocalTime(nS) {  
+        if(nS==null||nS==''){
+          return '无';
+        }   
+         return new Date(parseInt(nS) * 1000).toLocaleString().replace(/:\d{1,2}$/,' ');  
+      }
+
+
+
+      function delAll (argument) {
+
+        var data = tableCheck.getData();
+  
+        layer.confirm('确认要删除吗？'+data,function(index){
+            //捉到所有被选中的，发异步进行删除
+            layer.msg('删除成功', {icon: 1});
+            $(".layui-form-checked").not('.header').parents('tr').remove();
+        });
+      }
+      function bid_state_edit(id,state,obj){
+        $.ajax({
+          url: 'sub/bid_state_edit',
+          type: 'post',
+          dataType: 'json',
+          data: {"id": id,"state":state},
+          success:function(msg){
+            if(msg.flag=="true"){
+              var t_title;
+              var t_span;
+              var t_msg;
+              var t_class;
+              switch(state){
+                case 1:
+                  t_title='正常';
+                  t_span='&#xe702;';
+                  t_msg='已恢复正常';
+                  t_class=" ";
+                  break;
+                case 2:
+                  t_title='冻结';
+                  t_span='&#xe6b1;'
+                  t_msg='已冻结';
+                  t_class="layui-btn-primary";
+                  break;
+                case 3:
+                  t_title='退还本金';
+                  t_span='&#xe65e;'
+                  t_msg='已退还本金，请即使处理资产流动!';
+                  t_class="layui-btn-warm";
+                  break;
+                case 4:
+                  t_title='已完成';
+                  t_span='&#xe605;'
+                  t_msg='已提前完成，请即使处理资产流动!';
+                  t_class="layui-btn-normal";
+                  break;
+                default:
+                  return;
+              }
+              $(obj).attr('title',t_title);
+              $(obj).find('i').html(t_span);
+              $(obj).parents("tr").find("[data-field='state']").find('span').removeClass().addClass('layui-btn '+t_class).html(t_title);
+              layer.msg(t_msg,{icon: 1,time:1000});
+            }else{
+              layer.msg(msg.msg);
+            }
+          }
+        })
+      }
+    </script>
+  </body>
+
+</html>

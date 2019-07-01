@@ -1,0 +1,258 @@
+<html class="x-admin-sm">
+  <head>
+    <meta charset="UTF-8">
+    <title>欢迎页面-X-admin2.1</title>
+    <link rel="stylesheet" href="__BS_CSS__/font.css">
+    <link rel="stylesheet" href="__BS_CSS__/xadmin.css">
+    <script type="text/javascript" src="__P_JS__/jquery-3.2.1.min.js"></script>
+    <script type="text/javascript" src="__BS_LAY__/layui.js" charset="utf-8"></script>
+    <script type="text/javascript" src="__BS_JS__/xadmin.js"></script>
+    <script type="text/javascript" src="__BS_JS__/cookie.js"></script>
+  </head>
+  
+  <body>
+    <tool>
+      <table class="layui-table" style="margin: 0;display: none" id="tool_table">
+        <colgroup>
+          <col width="80">
+          <col width="120">
+        </colgroup>
+        <thead>
+          <tr>
+            <th>币名</th>
+            <th>数量</th>
+            <th>冻结金额</th>
+          </tr> 
+        </thead>
+        <tbody>
+        </tbody>
+      </table>
+      <table class="layui-table" style="margin-top: 0;display: none"id="message">
+        <colgroup>
+          <col width="140">
+          <col width="280">
+        </colgroup>
+        <thead>
+          <tr>
+            <th>时间</th>
+            <th>内容</th>
+          </tr> 
+        </thead>
+        <tbody>
+        </tbody>
+      </table>
+    </tool>
+    <div class="x-nav">
+      <span class="layui-breadcrumb">
+        <a href="">超级后台</a>
+        <a href="">会员管理</a>
+        <a>
+          <cite>用户查看</cite></a>
+      </span>
+      <a class="layui-btn layui-btn-small" style="line-height:1.6em;margin-top:3px;float:right" href="javascript:location.replace(location.href);" title="刷新">
+        <i class="layui-icon" style="line-height:30px">ဂ</i></a>
+    </div>
+    <div class="x-body">
+      <div class="layui-row">
+        <form class="layui-form layui-col-md12 x-so" >
+          <input type="text" name="id" placeholder="请输入ID" autocomplete="off" class="layui-input" value="">
+          <input type="text" name="name"  placeholder="请输入用户名" autocomplete="off" class="layui-input" value="">
+          <input type="text" name="phone"  placeholder="请输入用户电话" autocomplete="off" class="layui-input" value="">
+          <input type="text" name="email"  placeholder="请输入用户邮箱" autocomplete="off" class="layui-input" value="">
+          <div class="layui-input-inline">
+            <select name="state">
+              <option value="">状态</option>
+              <option value="1">注册</option>
+              <option value="2">正常</option>
+              <option value="3">冻结</option>
+              <option value="4">注销</option>
+            </select>
+          </div>
+          <button class="layui-btn"  lay-submit="" lay-filter="sreach"><i class="layui-icon">&#xe615;</i></button>
+        </form>
+      </div>
+
+      <table id="member_list" lay-filter="member_list" class="layui-table x-admin"></table>
+      <script type="text/html" id="member_bar">
+        <a onclick="member_stop(this,{{d.id}})" href="javascript:;"  title="{{d.state == '2' ? '正常' : d.state == '3' ? '冻结' : d.state == '1' ? '未绑定' : d.state == '4' ? '注销' : '问题账号'}}"><i class="layui-icon">
+          &#{{d.state == '2' ? 'xe601' : 'xe62f' }};
+        </i></a>
+        <a onclick="send_out({{d.id}})" href="javascript:;"><i class="layui-icon">&#xe606;</i></a>
+        <a onclick="recode('{{d.account}}',{{d.id}})" href="javascript:;"><i class="layui-icon">&#xe60e;</i></a>
+      </script>
+      <script type="text/html" id="member_state">
+        <span class="layui-btn layui-btn-normal layui-btn-mini {{d.state == '2' ? '' : 'layui-btn-disabled'}}">{{d.state == '2' ? '正常' : d.state == '3' ? '冻结' : d.state == '1' ? '未绑定' : d.state == '4' ? '注销' : '问题账号'}}</span>
+      </script>
+      <script type="text/html" id="member_money">
+        <button class="layui-btn layui-btn-normal" onclick='info_money({{d.money}})'>点我查看余额</button>
+      </script>
+    </div>
+    <script>
+
+      layui.use(['table','form'],function(){
+        var table = layui.table;
+        var laydate = layui.laydate;
+        var form = layui.form;
+        var tableIns=table.render({
+          elem: '#member_list'
+          ,height: 400
+          ,url: '/admin/json/user' //数据接口
+          ,page: true //开启分页
+          ,cols: [[ //表头
+            {field: 'id', title: 'ID', width:50, sort: true, }
+            ,{field: 'account', title: 'EOS账号', width:125}
+            ,{field: 'phone', title: '电话', width:110}
+            ,{field: 'email', title: '邮箱', width:120} 
+            ,{field: 'money', title: '账户余额', width: 130, sort: true,toolbar:"#member_money"}
+            ,{field: 'inviter', title: '邀请人ID', width: 80}
+            ,{field: 'reg_time', title: '注册时间', width: 150, sort: true,templet: '<div>{{getLocalTime(d.reg_time)}}</div>'}
+            ,{field: 'up_login_time', title: '上次登陆时间', width: 150, sort: true,templet: '<div>{{getLocalTime(d.up_login_time)}}</div>'}
+            ,{field: 'state', title: '状态',toolbar:'#member_state', width: 90}
+            ,{ title:'操作', toolbar: '#member_bar'}
+          ]]
+        });
+        form.on('submit(sreach)', function(data){
+          tableIns.reload({
+            where: data.field
+            ,page: {
+              curr: 1 
+            }
+          });
+          return false; 
+        });
+      })
+       /*用户-停用*/
+      function member_stop(obj,id){
+        if($(obj).attr('title')=='正常'){
+          layer.confirm('确认要停用吗？',function(index){
+            //发异步把用户状态进行更改
+            $.ajax({
+              url: '/admin/sub/user_state_down',
+              type: 'post',
+              dataType: 'json',
+              data: {"id": id},
+              success:function(msg){
+                if(msg.flag=="true"){
+                  $(obj).attr('title','冻结')
+                  $(obj).find('i').html('&#xe62f;');
+                  $(obj).parents("tr").find("[data-field='state']").find('span').addClass('layui-btn-disabled').html('冻结');
+                  layer.msg('已冻结!',{icon: 5,time:1000});
+                }
+              }
+            });
+          });
+        }else if($(obj).attr('title')=='冻结'){
+          layer.confirm('确认要启用吗？',function(index){
+            $.ajax({
+              url: '/admin/sub/user_state_up',
+              type: 'post',
+              dataType: 'json',
+              data: {"id": id},
+              success:function(msg){
+                if(msg.flag=='true'){
+                  $(obj).attr('title','正常')
+                  $(obj).find('i').html('&#xe601;');
+                  $(obj).parents("tr").find("[data-field='state']").find('span').removeClass('layui-btn-disabled').html('正常');
+                  layer.msg('已启用!',{icon: 1,time:1000});
+                }
+              }
+            });
+            
+          });
+        }else if($(obj).attr('title')=='未绑定'){
+          layer.msg('该账号不能操作!',{icon: 5,time:1000});
+        }else if($(obj).attr('title')=='注销'){
+          layer.msg('该账号不能操作!',{icon: 5,time:1000});
+        }else{
+          layer.msg('请联系管理员!',{icon: 2,time:1000});
+        }
+      }
+      function getLocalTime(nS) {  
+        if(nS==null||nS==''){
+          return '无';
+        }   
+         return new Date(parseInt(nS) * 1000).toLocaleString().replace(/:\d{1,2}$/,' ');  
+      }
+      function info_money(arr){
+        if(arr==null){
+          layer.msg("该用户没有余额");
+          return;
+        }
+        var str='';
+        for(key in arr){
+          str+='<tr><td>'+key+'</td><td>'+arr[key]["money"]+'</td><td>'+arr[key]["frozen"]+'</td></tr>';
+        }
+        // for(var i=0;i<arr.length;i++){
+        //   for(key in arr[i]){
+        //     console.log(key);
+        //     str+='<tr><td>'+key+'</td><td>'+arr[i][key]+'</td></tr>';
+        //   }
+        // }
+        $("#tool_table tbody").html(str);
+        layui.use('layer', function(){
+          var layer = layui.layer;
+          layer.open({
+            type: 1, 
+            content: $('#tool_table')
+          });
+        });        
+      }
+      function send_out(id){
+        layer.prompt({
+          formType: 2,
+          title: '请输入发送消息',
+          area: ['530px', '150px'] //自定义文本域宽高
+        }, function(value, index, elem){
+          $.ajax({
+            url: '/admin/sub/send_out',
+            type: 'post',
+            dataType: 'json',
+            data: {"id": id,"value":value},
+            success:function(msg){
+              if(msg.flag=="true"){
+                layer.alert("发送成功", {icon: 6},function (){
+                  layer.closeAll();
+                })
+              }else{
+                layer.msg(msg.msg);
+              }
+            }
+          });
+        });
+      }
+      function recode(user,id){
+        layui.use(['layer','table'], function(){
+          var layer = layui.layer;
+          var table = layui.table;
+          $.ajax({
+            url: '/admin/json/user_msg_recode',
+            type: 'post',
+            dataType: 'json',
+            data: {id: id},
+            success:function(msg){
+              if(msg.flag=="true"){
+                var str='';
+                for(key in msg.data){
+                  console.log(msg['data'][key].time);
+                  str+='<tr><td>'+getLocalTime(msg['data'][key].time)+'</td><td>'+msg['data'][key].content+'</td></tr>';
+                }
+                console.log(str);
+                $("#message tbody").html(str);
+                layer.open({
+                  type: 1, 
+                  title:user+"的信息",
+                  content: $('#message'),
+                  area: ["440px","300px"]
+                });
+              }else{
+                console.log(msg)
+                layer.msg(msg.msg);
+              }
+            }
+          })
+        });
+      }
+    </script>
+  </body>
+
+</html>

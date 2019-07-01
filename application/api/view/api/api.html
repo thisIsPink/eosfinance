@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>sel测试</title>
+	<link rel="stylesheet" href="__BS_CSS__/font.css">
+    <link rel="stylesheet" href="__BS_CSS__/xadmin.css">
+    <script type="text/javascript" src="__P_JS__/jquery-3.2.1.min.js"></script>
+    <script type="text/javascript" src="__BS_LAY__/layui.js" charset="utf-8"></script>
+    <style>
+    	xmp{white-space:normal;}
+    </style>
+</head>
+<body>
+	<table class="layui-table">
+		<colgroup>
+			<col width="120">
+			<col width="200">
+			<col width="200">
+			<col width="400">
+			<col width="400">
+			<col width="100">
+		</colgroup>
+		<thead>
+			<tr>
+				<th>功能</th>
+				<th>地址</th>
+				<th>传参</th>
+				<th>输入测试</th>
+				<th>返回内容</th>
+				<th>发送</th>
+			</tr> 
+		</thead>
+		<tbody>
+			<tr>
+				<td>首页信息</td>
+				<td>index/index</td>
+				<td>无</td>
+				<td><input type="text" name="text" autocomplete="off" class="layui-input test_url" value="<{:url('index/index')}>"></td>
+				<td><xmp class="content"></xmp></td>
+				<th><button class="layui-btn" onclick="sub(this)">点我测试</button></th>
+			</tr>
+			<tr>
+				<td>关于我们</td>
+				<td>index/about</td>
+				<td>无</td>
+				<td><input type="text" name="text" autocomplete="off" class="layui-input test_url" value="<{:url('index/about')}>"></td>
+				<td><xmp class="content"></xmp></td>
+				<th><button class="layui-btn" onclick="sub(this)">点我测试</button></th>
+			</tr>
+			<tr>
+				<td>表列表</td>
+				<td>index/bid_list</td>
+				<td>page(页数[默认第一页]),limit(条数[默认20条])[type(类型:1信用标,2活动标)没有则为都请求]</td>
+				<td><input type="text" name="text" autocomplete="off" class="layui-input test_url" value="<{:url('index/bid_list')}>"></td>
+				<td><xmp class="content"></xmp></td>
+				<th><button class="layui-btn" onclick="sub(this)">点我测试</button></th>
+			</tr>
+			<tr>
+				<td>表详情</td>
+				<td>index/bid_info</td>
+				<td>ID</td>
+				<td><input type="text" name="text" autocomplete="off" class="layui-input test_url" value="<{:url('index/bid_info?id=1')}>"></td>
+				<td><xmp class="content"></xmp></td>
+				<th><button class="layui-btn" onclick="sub(this)">点我测试</button></th>
+			</tr>
+			<tr>
+				<td>获取用户余额</td>
+				<td>index/per_order</td>
+				<td></td>
+				<td><input type="text" name="text" autocomplete="off" class="layui-input test_url" value="<{:url('index/per_order')}>"></td>
+				<td><xmp class="content"></xmp></td>
+				<th><button class="layui-btn" onclick="sub(this)">点我测试</button></th>
+			</tr>
+			<tr>
+				<td>帮助页面</td>
+				<td>index/help</td>
+				<td>无</td>
+				<td><input type="text" name="text" autocomplete="off" class="layui-input test_url" value="<{:url('index/help')}>"></td>
+				<td><xmp class="content"></xmp></td>
+				<th><button class="layui-btn" onclick="sub(this)">点我测试</button></th>
+			</tr>
+			<tr>
+				<td>收益排行</td>
+				<td>index/ranking</td>
+				<td>无</td>
+				<td><input type="text" name="text" autocomplete="off" class="layui-input test_url" value="<{:url('index/ranking')}>"></td>
+				<td><xmp class="content"></xmp></td>
+				<th><button class="layui-btn" onclick="sub(this)">点我测试</button></th>
+			</tr>
+			<tr>
+				<td>账户中心</td>
+				<td>index/center</td>
+				<td></td>
+				<td><input type="text" name="text" autocomplete="off" class="layui-input test_url" value="<{:url('index/center')}>"></td>
+				<td><xmp class="content"></xmp></td>
+				<th><button class="layui-btn" onclick="sub(this)">点我测试</button></th>
+			</tr>
+			<tr>
+				<td>招商合作</td>
+				<td>index/cooperation</td>
+				<td>name(联系人),location(所在地区),phone(联系电话),email(联系邮箱),project(项目名字),url(网站地址),token(代币token)</td>
+				<td><input type="text" name="text" autocomplete="off" class="layui-input test_url" value="<{:url('index/cooperation')}>?nature=&name=&people=&phone=&region="></td>
+				<td><xmp class="content"></xmp></td>
+				<th><button class="layui-btn" onclick="sub(this)">点我测试</button></th>
+			</tr>
+			<tr>
+				<td>招商合作</td>
+				<td>index/super_apply_add</td>
+				<td>name(联系人),location(所在地区),phone(联系电话),email(联系邮箱)</td>
+				<td><input type="text" name="text" autocomplete="off" class="layui-input test_url" value="<{:url('index/super_apply_add')}>?nature=&name=&people=&phone=&region="></td>
+				<td><xmp class="content"></xmp></td>
+				<th><button class="layui-btn" onclick="sub(this)">点我测试</button></th>
+			</tr>
+			<tr>
+				<td>邀请好友</td>
+				<td>index/inviation</td>
+				<td></td>
+				<td><input type="text" name="text" autocomplete="off" class="layui-input test_url" value="<{:url('index/inviation')}>"></td>
+				<td><xmp class="content"></xmp></td>
+				<th><button class="layui-btn" onclick="sub(this)">点我测试</button></th>
+			</tr>
+			<tr>
+				<td>好友排行</td>
+				<td>index/inviation_friend_ranking</td>
+				<td></td>
+				<td><input type="text" name="text" autocomplete="off" class="layui-input test_url" value="<{:url('index/inviation_friend_ranking')}>"></td>
+				<td><xmp class="content"></xmp></td>
+				<th><button class="layui-btn" onclick="sub(this)">点我测试</button></th>
+			</tr>
+			<tr>
+				<td>交易记录</td>
+				<td>index/historical_record</td>
+				<td>无</td>
+				<td><input type="text" name="text" autocomplete="off" class="layui-input test_url" value="<{:url('index/historical_record')}>"></td>
+				<td><xmp class="content"></xmp></td>
+				<th><button class="layui-btn" onclick="sub(this)">点我测试</button></th>
+			</tr>
+			<tr>
+				<td>公司账户充值信息</td>
+				<td>index/recharge</td>
+				<td>无</td>
+				<td><input type="text" name="text" autocomplete="off" class="layui-input test_url" value="<{:url('index/recharge')}>"></td>
+				<td><xmp class="content"></xmp></td>
+				<th><button class="layui-btn" onclick="sub(this)">点我测试</button></th>
+			</tr>
+		</tbody>
+	</table>
+	<hr class="layui-bg-red">
+	状态：420参数错误,421token错误,431验证码错误,432账号已存在,433账号不存在,434账户名或密码错误,435该方式已被绑定,436发送验证码过于频繁,450格式错误,451信息不对称,452修改值与原值相同,461标时间错误,462投标数量不在范围内,463标不在正常状态,464投资金额大于剩余金额,465用户余额不足,466账户状态不能投资,467支付密码错误,200正常,500服务器错误
+	<hr class="layui-bg-red">
+	<table class="layui-table">
+		<colgroup>
+			<col width="120">
+			<col width="200">
+			<col width="200">
+			<col width="400">
+			<col width="400">
+			<col width="100">
+		</colgroup>
+		<thead>
+			<tr>
+				<th>功能</th>
+				<th>地址</th>
+				<th>传参</th>
+				<th>输入测试</th>
+				<th>返回内容</th>
+				<th>发送</th>
+			</tr> 
+		</thead>
+		<tbody>
+			<tr>
+				<td>验证码</td>
+				<td>api/get_code</td>
+				<td>name=[邮箱或手机],[如果是手机的话需要phone_head]</td>
+				<td><input type="text" name="text" autocomplete="off" class="layui-input test_url" value="<{:url('index/get_code')}>?name=1052817812@qq.com"></td>
+				<td><xmp class="content"></xmp></td>
+				<th><button class="layui-btn" onclick="sub(this)">点我测试</button></th>
+			</tr>
+			<tr>
+				<td>注册</td>
+				<td>api/reg</td>
+				<td>名字,密码,验证码,[inviter邀请人]</td>
+				<td><input type="text" name="text" autocomplete="off" class="layui-input test_url" value="<{:url('index/reg')}>?name=1052817812@qq.com&password=123123&inviter=1052817812@qq.com&code="></td>
+				<td><xmp class="content"></xmp></td>
+				<th><button class="layui-btn" onclick="sub(this)">点我测试</button></th>
+			</tr>
+			<tr>
+				<td>登陆</td>
+				<td>api/login</td>
+				<td>名字,密码</td>
+				<td><input type="text" name="text" autocomplete="off" class="layui-input test_url" value="<{:url('api/login')}>?name=1052817812@qq.com&password=123123"></td>
+				<td><xmp class="content"></xmp></td>
+				<th><button class="layui-btn" onclick="sub(this)">点我测试</button></th>
+			</tr>
+			<tr>
+				<td>消息及公告</td>
+				<td>api/message</td>
+				<td>名字,密码</td>
+				<td><input type="text" name="text" autocomplete="off" class="layui-input test_url" value="<{:url('api/message')}>"></td>
+				<td><xmp class="content"></xmp></td>
+				<th><button class="layui-btn" onclick="sub(this)">点我测试</button></th>
+			</tr>
+			<tr>
+				<td>查看消息</td>
+				<td>api/lock_msg</td>
+				<td>type('message'||'notify')</td>
+				<td><input type="text" name="text" autocomplete="off" class="layui-input test_url" value="<{:url('index/message')}>"></td>
+				<td><xmp class="content"></xmp></td>
+				<th><button class="layui-btn" onclick="sub(this)">点我测试</button></th>
+			</tr>
+			<tr>
+				<td>公告详情</td>
+				<td>api/notice_info</td>
+				<td>id</td>
+				<td><input type="text" name="text" autocomplete="off" class="layui-input test_url" value="<{:url('index/notice_info')}>?id=1"></td>
+				<td><xmp class="content"></xmp></td>
+				<th><button class="layui-btn" onclick="sub(this)">点我测试</button></th>
+			</tr>
+		</tbody>
+	</table>
+	<hr class="layui-bg-red">
+	安全修改:以下传值都要带上token
+	<hr class="layui-bg-red">
+	<table class="layui-table">
+		<colgroup>
+			<col width="120">
+			<col width="200">
+			<col width="200">
+			<col width="400">
+			<col width="400">
+			<col width="100">
+		</colgroup>
+		<thead>
+			<tr>
+				<th>功能</th>
+				<th>地址</th>
+				<th>传参</th>
+				<th>输入测试</th>
+				<th>返回内容</th>
+				<th>发送</th>
+			</tr> 
+		</thead>
+		<tbody>
+			<tr>
+				<td>设置昵称</td>
+				<td>api/nick</td>
+				<td>name</td>
+				<td><input type="text" name="text" autocomplete="off" class="layui-input test_url" value="/index/nick?name=江湖达人&token="></td>
+				<td><xmp class="content"></xmp></td>
+				<th><button class="layui-btn" onclick="sub(this)">点我测试</button></th>
+			</tr>
+			<tr>
+				<td>验证支付密码</td>
+				<td>api/ver_pay_pwd</td>
+				<td>pay_pwd</td>
+				<td><input type="text" name="text" autocomplete="off" class="layui-input test_url" value="<{:url('index/ver_pay_pwd')}>?pay_pwd=123123&token="></td>
+				<td><xmp class="content"></xmp></td>
+				<th><button class="layui-btn" onclick="sub(this)">点我测试</button></th>
+			</tr>
+			<tr>
+				<td>获取手机验证码</td>
+				<td>api/phone_code</td>
+				<td>[phone,phone_head]</td>
+				<td><input type="text" name="text" autocomplete="off" class="layui-input test_url" value="<{:url('index/phone_code')}>"></td>
+				<td><xmp class="content"></xmp></td>
+				<th><button class="layui-btn" onclick="sub(this)">点我测试</button></th>
+			</tr>
+			<tr>
+				<td>获取邮箱验证码</td>
+				<td>api/email_code</td>
+				<td>[email]</td>
+				<td><input type="text" name="text" autocomplete="off" class="layui-input test_url" value="<{:url('index/email_code')}>"></td>
+				<td><xmp class="content"></xmp></td>
+				<th><button class="layui-btn" onclick="sub(this)">点我测试</button></th>
+			</tr>
+			<tr>
+				<td>验证新手机或邮箱验证码是否正确</td>
+				<td>api/new_pe_code_ver</td>
+				<td></td>
+				<td><input type="text" name="text" autocomplete="off" class="layui-input test_url" value="<{:url('index/new_pe_code_ver')}>"></td>
+				<td><xmp class="content"></xmp></td>
+				<th><button class="layui-btn" onclick="sub(this)">点我测试</button></th>
+			</tr>
+			<tr>
+				<td>登陆修改密码</td>
+				<td>api/pwd</td>
+				<td>new,email_code,phone_code</td>
+				<td><input type="text" name="text" autocomplete="off" class="layui-input test_url" value="<{:url('index/pwd')}>?phone_code=&email_code=&new=321321&token="></td>
+				<td><xmp class="content"></xmp></td>
+				<th><button class="layui-btn" onclick="sub(this)">点我测试</button></th>
+			</tr>
+			<tr>
+				<td>设置支付密码</td>
+				<td>api/set_repay_pwd</td>
+				<td>new,email_code,phone_code</td>
+				<td><input type="text" name="text" autocomplete="off" class="layui-input test_url" value="<{:url('index/set_repay_pwd')}>?new=321321&token="></td>
+				<td><xmp class="content"></xmp></td>
+				<th><button class="layui-btn" onclick="sub(this)">点我测试</button></th>
+			</tr>
+			<tr>
+				<td>确认修改手机或邮箱</td>
+				<td>api/edit_pe</td>
+				<td>name,phone_code,email_code</td>
+				<td><input type="text" name="text" autocomplete="off" class="layui-input test_url" value="<{:url('index/edit_pe')}>?name=18502398902&phone_code=&email_code=&token="></td>
+				<td><xmp class="content"></xmp></td>
+				<th><button class="layui-btn" onclick="sub(this)">点我测试</button></th>
+			</tr>
+			<tr>
+				<td>投标</td>
+				<td>api/investment</td>
+				<td>bid(标id),money(金额),pay_pwd(支付密码)</td>
+				<td><input type="text" name="text" autocomplete="off" class="layui-input test_url" value="<{:url('index/investment')}>?bid=1&money=100&pay_pwd=123123&token="></td>
+				<td><xmp class="content"></xmp></td>
+				<th><button class="layui-btn" onclick="sub(this)">点我测试</button></th>
+			</tr>
+			<tr>
+				<td>提币</td>
+				<td>api/reflect</td>
+				<td>email_code(邮箱验证码),coin(货币名),sum(数量),pay_pwd(支付密码),</td>
+				<td><input type="text" name="text" autocomplete="off" class="layui-input test_url" value="<{:url('index/reflect')}>?email_code=&coin=EOS&sum=10&pay_pwd=123123&token="></td>
+				<td><xmp class="content"></xmp></td>
+				<th><button class="layui-btn" onclick="sub(this)">点我测试</button></th>
+			</tr>
+			<tr>
+				<td>用户个人投资记录</td>
+				<td>api/investment_record</td>
+				<td></td>
+				<td><input type="text" name="text" autocomplete="off" class="layui-input test_url" value="<{:url('index/investment_record')}>"></td>
+				<td><xmp class="content"></xmp></td>
+				<th><button class="layui-btn" onclick="sub(this)">点我测试</button></th>
+			</tr>
+			<tr>
+				<td>设置自动投标</td>
+				<td>api/set_auto</td>
+				<td>name,pay_pwd(支付密码)</td>
+				<td><input type="text" name="text" autocomplete="off" class="layui-input test_url" value="<{:url('index/set_auto')}>?name&pay_pwd=123123&token="></td>
+				<td><xmp class="content"></xmp></td>
+				<th><button class="layui-btn" onclick="sub(this)">点我测试</button></th>
+			</tr>
+			<tr>
+				<td>退出登陆</td>
+				<td>api/sign_out</td>
+				<td></td>
+				<td><input type="text" name="text" autocomplete="off" class="layui-input test_url" value="<{:url('index/sign_out')}>?token="></td>
+				<td><xmp class="content"></xmp></td>
+				<th><button class="layui-btn" onclick="sub(this)">点我测试</button></th>
+			</tr>
+		</tbody>
+	</table>
+	<script type="text/javascript">
+		function sub(obj){
+			var url=$((obj)).closest("tr").find(".test_url").val();
+			$.ajax({
+				url: url,
+				type: 'post',
+				success:function(msg){
+					$((obj)).closest("tr").find(".content").html(msg)
+				}
+			});
+			
+		}
+	</script>
+</body>
+</html>

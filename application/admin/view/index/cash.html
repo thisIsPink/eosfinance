@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html class="x-admin-sm">
+  
+  <head>
+    <meta charset="UTF-8">
+    <title>欢迎页面-X-admin2.1</title>
+    <link rel="stylesheet" href="__BS_CSS__/font.css">
+    <link rel="stylesheet" href="__BS_CSS__/xadmin.css">
+    <script type="text/javascript" src="__P_JS__/jquery-3.2.1.min.js"></script>
+    <script type="text/javascript" src="__BS_LAY__/layui.js" charset="utf-8"></script>
+    <script type="text/javascript" src="__BS_JS__/xadmin.js"></script>
+    <script type="text/javascript" src="__BS_JS__/cookie.js"></script>
+  </head>
+  
+  <body class="">
+    <div class="x-nav">
+      <span class="layui-breadcrumb">
+        <a href="">超级后台</a>
+        <a href="">交易中心</a>
+        <a>
+          <cite>提币申请</cite></a>
+      </span>
+      <a class="layui-btn layui-btn-small" style="line-height:1.6em;margin-top:3px;float:right" href="javascript:location.replace(location.href);" title="刷新">
+        <i class="layui-icon" style="line-height:30px">ဂ</i></a>
+    </div>
+    <div class="x-body">
+      <div class="layui-row">
+      </div>
+      <table class="layui-table" id="bid_tender_record" lay-filter="bid_tender_record"></table>
+    </div>
+    <script type="text/html" id="profit_operation">
+        <a onclick="profit_ok(this,{{d.id}})" href="javascript:;"  title="{{d.state == '1' ? '未确认' : d.state == '2' ? '已确认' : '错误' }}">
+          <i class="layui-icon">
+            &#{{d.state == '1' ? 'xe659' : d.state == '2' ? 'xe605' : 'xe607' }};
+          </i>
+        </a>
+      </script>
+    <script>
+      layui.use(['table',"form","laydate"],function(){
+        var table = layui.table;
+        var form = layui.form;
+        var laydate= layui.laydate;
+        var tableIns= table.render({
+          elem: '#bid_tender_record'
+          ,height: 420
+          ,url: 'json/cash' //数据接口
+          ,page: true //开启分页
+          ,cols: [[ //表头
+            {field: 'user', title: '用户账号'}
+            ,{field: 'time', title: '时间',templet: '<div>{{getLocalTime(d.time)}}</div>'}
+            ,{field: 'num', title: '数量'}
+            ,{field: 'coin', title: '币种'}
+            ,{field: 'fee', title: '手续费'}
+            ,{title: '到账金额',templet: '<div>{{d.num-d.fee}}</div>'}
+            ,{field: 'state', title: '状态',templet: '<div>{{d.state == "1" ? "未付款" : d.state == "2" ? "已付款" : "错误"}}</div>'}
+            ,{title:'操作', toolbar: '#profit_operation'}
+          ]]
+        });
+      })
+      function getLocalTime(nS) {  
+        if(nS==null||nS==''){
+          return '无';
+        }   
+         return new Date(parseInt(nS) * 1000).toLocaleString().replace(/:\d{1,2}$/,' ');   
+      }
+      function profit_ok(obj,id){
+        if($(obj).attr('title')=='未确认'){
+          layer.prompt({
+            formType: 2,
+            title: '请输入交易id(trx_id)',
+          }, function(value, index, elem){
+            $.ajax({
+              url: 'sub/cash_state_ok',
+              type: 'post',
+              dataType: 'json',
+              data: {"id": id,"value":value},
+              success:function(msg){
+                if(msg.flag=="true"){
+                  $(obj).attr('title','已确认')
+                  $(obj).find('i').html('&#xe605;');
+                  $(obj).parents("tr").find("[data-field='state'] div").html('已确认');
+                  layer.msg('修改成功!',{icon: 1,time:1000});
+                }else{
+                  layer.msg("修改失败");
+                }
+                layer.close(index);
+              }
+            });
+          });
+          // layer.confirm('确认已转账了吗？',function(index){
+          //   $.ajax({
+          //     url: '<{:url("sub/cash_state_ok")}>',
+          //     type: 'post',
+          //     dataType: 'json',
+          //     data: {"id": id},
+          //     success:function(msg){
+          //       if(msg.flag=="true"){
+          //         $(obj).attr('title','已确认')
+          //         $(obj).find('i').html('&#xe605;');
+          //         $(obj).parents("tr").find("[data-field='state'] div").html('已确认');
+          //         layer.msg('修改成功!',{icon: 1,time:1000});
+          //       }else{
+          //         layer.msg("修改失败");
+          //       }
+          //     }
+          //   });
+          // });
+        }
+      }
+    </script>
+  </body>
+
+</html>

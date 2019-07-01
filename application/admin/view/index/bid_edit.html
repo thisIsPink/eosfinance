@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html class="x-admin-sm">
+  
+  <head>
+    <meta charset="UTF-8">
+    <title></title>
+    <link rel="stylesheet" href="__BS_CSS__/font.css">
+    <link rel="stylesheet" href="__BS_CSS__/xadmin.css">
+    <script type="text/javascript" src="__P_JS__/jquery-3.2.1.min.js"></script>
+    <script type="text/javascript" src="__BS_LAY__/layui.js" charset="utf-8"></script>
+    <script type="text/javascript" src="__BS_JS__/xadmin.js"></script>
+    <script type="text/javascript" src="__BS_JS__/cookie.js"></script>
+  </head>
+  
+  <body>
+    <div class="x-body">
+      <form class="layui-form">
+        <div class="layui-form-item">
+          <div class="layui-inline">
+            <label class="layui-form-label">
+              <span class="x-red">*</span>标题
+            </label>
+            <div class="layui-input-inline">
+               <input type="text" id="title" name="title" required="" lay-verify="required" value="<{$data.title}>" autocomplete="off" class="layui-input">
+            </div>
+          </div>
+          <div class="layui-inline">
+            <label class="layui-form-label">
+              <span class="x-red">*</span>总额
+            </label>
+            <div class="layui-input-inline">
+               <input type="text" id="total" value="<{$data.total}>" name="total" required="" lay-verify="required" autocomplete="off" class="layui-input" oninput='this.value=this.value.toString().match(/^\d+(?:\.\d{0,10})?/)'>
+            </div>
+          </div>
+          <div class="layui-inline">
+            <label class="layui-form-label">
+              <span class="x-red">*</span>计息方式
+            </label>
+            <div class="layui-input-inline">
+               <input type="text" value="按月付息,到期还本"  autocomplete="off" required="" lay-verify="required" class="layui-input" disabled>
+            </div>
+            <div class="layui-form-mid layui-word-aux">
+              <span class="x-red">*</span>暂时不可修改
+            </div>
+          </div>
+        </div>
+        <div class="layui-form-item">
+          <div class="layui-inline">
+            <label class="layui-form-label"><span class="x-red">*</span>需求货币</label>
+            <div class="layui-input-block">
+              <div class="layui-input-inline" >
+                <select class="need_coin_list" name="need" lay-search  required="" lay-verify="required" lay-filter="test">
+
+                </select>
+              </div>
+            </div>
+          </div>
+          <div class="layui-inline">
+            <label for="username" class="layui-form-label">
+              <span class="x-red">*</span>结算币种
+            </label>
+            <div class="layui-input-inline" >
+              <select class="interest_coin_list" name="interest" required="" lay-verify="required" lay-search lay-filter="test">
+
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="layui-form-item">
+          <div class="layui-inline">
+            <label for="L_pass" class="layui-form-label">
+              <span class="x-red">*</span>开始时间
+            </label>
+            <div class="layui-input-inline">
+              <input class="layui-input" autocomplete="off" placeholder="开始时间" required="" lay-verify="required" name="start" id="start">
+            </div>
+          </div>
+          <div class="layui-inline">
+            <label for="L_repass" class="layui-form-label">
+              <span class="x-red">*</span>停标时间
+            </label>
+            <div class="layui-input-inline">
+              <input class="layui-input" autocomplete="off" placeholder="开始时间" required="" lay-verify="required" name="end" id="end">
+            </div>
+          </div>
+          <div class="layui-inline">
+            <label for="phone" class="layui-form-label">
+              <span class="x-red">*</span>使用天数
+            </label>
+            <div class="layui-input-inline">
+              <input type="text" id="repay" name="repay" required="" lay-verify="required" placeholder="天" value="<{$data.repayment_time}>" autocomplete="off" class="layui-input" oninput='this.value=this.value.toString().match(/^\d+(?:\.\d{0,10})?/)'>
+            </div>
+          </div>
+        </div>
+        <div class="layui-form-item">
+          <label for="L_pass" class="layui-form-label">
+            <span class="x-red">*</span>相关资料
+          </label>
+          <div class="layui-input-inline" style="width: 720px">
+            <textarea id="details" style="display: none;"><{$data.details}></textarea>
+          </div>
+        </div>
+        <div class="layui-form-item">
+          <label for="L_pass" class="layui-form-label">
+            <span class="x-red">*</span>基本信息
+          </label>
+          <div class="layui-input-inline" style="width: 720px">
+            <textarea id="info" style="display: none;"><{$data.info}></textarea>
+          </div>
+        </div>
+        <div class="layui-form-item">
+          <div class="layui-inline">
+            <label for="L_pass" class="layui-form-label">
+              <span class="x-red">*</span>年利率
+            </label>
+            <div class="layui-input-inline">
+              <input type="text" id="profit" name="profit" value="<{$data.annual_profit}>" required="" lay-verify="required" placeholder="%" autocomplete="off" class="layui-input" oninput='this.value=this.value.toString().match(/^\d+(?:\.\d{0,10})?/)'>
+            </div>
+          </div>
+          <div class="layui-inline">
+            <label for="L_repass" class="layui-form-label">
+              <span class="x-red">*</span>标类型
+            </label>
+            <div class="layui-input-inline">
+              <select class="type" name="type" lay-search  required="" lay-verify="required">
+                <option value="1">创建时固定反币数量</option>
+                <option value="2">反币数量为返利时的比例</option>
+              </select>
+            </div>
+          </div>
+          <div class="layui-inline">
+            <label for="L_pass" class="layui-form-label">预计反币量
+            </label>
+            <div class="layui-input-inline">
+              <input type="text" name="expect" class="layui-input" disabled>
+            </div>
+          </div>
+        </div>
+        <div class="layui-form-item">
+          <div class="layui-inline">
+            <label for="L_pass" class="layui-form-label">
+              <span class="x-red">*</span>用途
+            </label>
+            <div class="layui-input-inline">
+              <input type="text" id="purpose" value="<{$data.purpose}>" name="purpose" required="" lay-verify="required" autocomplete="off" class="layui-input">
+            </div>
+          </div>
+          <div class="layui-inline">
+            <label for="L_repass" class="layui-form-label">
+              <span class="x-red">*</span>最低投资金额
+            </label>
+            <div class="layui-input-inline">
+              <input type="text" id="min_eos" value="<{$data.min_eos}>" name="min_eos" required="" lay-verify="required" autocomplete="off" class="layui-input" oninput='this.value=this.value.toString().match(/^\d+(?:\.\d{0,2})?/)'>
+            </div>
+          </div>
+          <div class="layui-inline">
+            <label for="L_pass" class="layui-form-label">
+              <span class="x-red">*</span>最高投资金额
+            </label>
+            <div class="layui-input-inline">
+              <input type="text" id="max_eos" value="<{$data.max_eos}>" name="max_eos" required="" lay-verify="required" autocomplete="off" class="layui-input" oninput='this.value=this.value.toString().match(/^\d+(?:\.\d{0,2})?/)'>
+            </div>
+          </div>
+        </div>
+        <div class="layui-form-item">
+          <label for="L_repass" class="layui-form-label">
+          </label>
+          <button  class="layui-btn" lay-filter="edit" lay-submit="">修改</button>
+        </div>
+      </form>
+    </div>
+    <script>
+      var coin;
+      var state=true;
+      layui.use(['form','layer','layedit','laydate'], function(){
+        var form = layui.form
+        ,layer = layui.layer
+        ,laydate = layui.laydate
+        ,layedit = layui.layedit;
+
+        var buile_details=layedit.build('details',{tool: [
+          'strong' //加粗
+          ,'italic' //斜体
+          ,'underline' //下划线
+          ,'del' //删除线
+          ,'|' //分割线
+          ,'left' //左对齐
+          ,'center' //居中对齐
+          ,'right' //右对齐
+          ,'link' //超链接
+          ,'unlink' //清除链接
+          ,'face' //表情
+        ]}); //建立编辑器
+        var buile_info=layedit.build('info',{tool: [
+          'strong' //加粗
+          ,'italic' //斜体
+          ,'underline' //下划线
+          ,'del' //删除线
+          ,'|' //分割线
+          ,'left' //左对齐
+          ,'center' //居中对齐
+          ,'right' //右对齐
+          ,'link' //超链接
+          ,'unlink' //清除链接
+          ,'face' //表情
+        ]});
+
+        laydate.render({
+          elem: '#start', //指定元素
+          type: 'datetime',
+          value: new Date('<{$data.start_time}>'*1000)
+        });
+        laydate.render({
+          elem: '#end', //指定元素
+          type: 'datetime',
+          value: new Date('<{$data.end_bid_time}>'*1000)
+          ,done: function(value){
+            var start=Date.parse(new Date($('[name="start"]').val()));
+            console.log(new Date(value)-start);
+            if(new Date(value)-start<0){
+              layer.msg("停标时间不能小于开标时间");
+              return;
+            }
+            sel_money();
+          }
+        });
+        $.ajax({
+          url: '<{:url("json/coin_list")}>',
+          type: 'post',
+          dataType: 'json',
+          success:function(msg){
+            var need_str='';
+            var interest_str='';
+            for(a in msg){
+              if(msg[a]["id"]=='<{$data.need_coin_id}>'){
+                need_str+='<option value="'+msg[a]["id"]+'" selected>'+msg[a]["name"]+'</option>'
+              }else{
+                need_str+='<option value="'+msg[a]["id"]+'">'+msg[a]["name"]+'</option>'
+              }
+              if(msg[a]["id"]=='<{$data.interest_coin_id}>'){
+                interest_str+='<option value="'+msg[a]["id"]+'" selected>'+msg[a]["name"]+'</option>'
+              }else{
+                interest_str+='<option value="'+msg[a]["id"]+'">'+msg[a]["name"]+'</option>'
+              }
+            }
+            $(".interest_coin_list").html(interest_str);
+            $(".need_coin_list").html(need_str);
+            form.render('select');
+            coin=msg;
+            sel_money()
+          }
+        });
+
+          //监听提交
+        form.on('submit(edit)', function(data){
+          if(state){
+            state=false;
+            var obj=data.field;
+            obj.start=Date.parse(new Date(data.field.start))/1000;
+            obj.end=Date.parse(new Date(data.field.end))/1000;
+            obj.details=layedit.getContent(buile_details);
+            obj.info=layedit.getContent(buile_info);
+            if(obj.end-obj.start<0){
+              layer.msg("请注意您填写的时间")
+              return false;
+            }
+            obj.id='<{$data.Id}>';
+            $.ajax({
+              url: 'sub/bid_edit',
+              type: 'post',
+              dataType: 'json',
+              data: obj,
+              success:function(msg){
+                if(msg.flag=="true"){
+                  layer.alert("修改成功", {icon: 6},function () {
+                    // 获得frame索引
+                    var index = parent.layer.getFrameIndex(window.name);
+                    //关闭当前frame
+                    parent.layer.close(index);
+                    x_admin_father_reload();
+                  });
+                }else{
+                  layer.msg(msg.msg);
+                }
+              }
+            });
+          }
+          return false;
+        });
+        form.on('select(test)', function(data){
+          sel_money();
+        });
+        $("#profit").change(function(){
+          sel_money();
+        })
+        $("#total").change(function(){
+          sel_money();
+        })
+      });
+      function sel_money(){
+        var total=$("#total").val();
+        var need=$('[name="need"]').val();
+        var interest=$('[name="interest"]').val();
+        var profit=$('[name="profit"]').val();
+        var repay=$('[name="repay"]').val();
+        if(need==''||interest==''||profit==''||repay==''||total==''){
+          return;
+        }else{
+          var c_need,c_interest;
+          for(a in coin){
+            if(coin[a]["id"]==need){
+              c_need=coin[a];
+            }
+            if(coin[a]["id"]==interest){
+              c_interest=coin[a];
+            }
+          }
+          var to_coin=(total/c_need["proportion"]*c_interest["proportion"]);
+          var money=to_coin*repay*profit/360/100;
+          $("[name='expect']").val(money+' '+c_interest["name"]);
+        }
+      }
+    </script>
+  </body>
+
+</html>

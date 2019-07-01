@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html class="x-admin-sm">
+  
+  <head>
+    <meta charset="UTF-8">
+    <title>欢迎页面-X-admin2.1</title>
+    <link rel="stylesheet" href="__BS_CSS__/font.css">
+    <link rel="stylesheet" href="__BS_CSS__/xadmin.css">
+    <script type="text/javascript" src="__P_JS__/jquery-3.2.1.min.js"></script>
+    <script type="text/javascript" src="__BS_LAY__/layui.js" charset="utf-8"></script>
+    <script type="text/javascript" src="__BS_JS__/xadmin.js"></script>
+    <script type="text/javascript" src="__BS_JS__/cookie.js"></script>
+  </head>
+  
+  <body>
+    <div class="x-nav">
+      <span class="layui-breadcrumb">
+        <a href="">超级后台</a>
+        <a href="">信息中心</a>
+        <a>
+          <cite>通知发送</cite></a>
+      </span>
+      <a class="layui-btn layui-btn-small" style="line-height:1.6em;margin-top:3px;float:right" href="javascript:location.replace(location.href);" title="刷新">
+        <i class="layui-icon" style="line-height:30px">ဂ</i></a>
+    </div>
+    <div class="x-body">
+      <div class="layui-row">
+        <form class="layui-form layui-col-md12 x-so">
+          <input class="layui-input" placeholder="开始日" name="start" id="start">
+          <input class="layui-input" placeholder="截止日" name="end" id="end">
+          <button class="layui-btn"  lay-submit="" lay-filter="sreach"><i class="layui-icon">&#xe615;</i></button>
+        </form>
+      </div>
+      <xblock>
+        <button class="layui-btn" onclick="add_recode()"><i class="layui-icon"></i>添加</button>
+      </xblock>
+      <table class="layui-table" id="notify_list"></table>
+      <script type="text/html" id="notify_bar">
+         <a onclick="del('{{d.id}}')" href="javascript:;" class="layui-btn layui-btn-danger">删除</a>
+      </script>
+    </div>
+    <script>
+      var state=true;
+      layui.use(["table",'form','laydate'],function(){
+        var table = layui.table;
+        var form = layui.form;
+        var laydate = layui.laydate;
+        var tableIns=table.render({
+          elem: '#notify_list'
+          ,height: 420
+          ,url: 'json/notify' //数据接口
+          ,page: true //开启分页
+          ,cols: [[ //表头
+            {field: 'time', title: '时间', width:240, sort: true,templet: '<div>{{getLocalTime(d.time)}}</div>'}
+            ,{field: 'content', title: '内容',width:600}
+            ,{title:'操作', toolbar: '#notify_bar'}
+          ]]
+        });
+        laydate.render({
+            elem: '#start', //指定元素
+            type: 'datetime'
+        });
+        laydate.render({
+          elem: '#end', //指定元素
+          type: 'datetime'
+          ,done: function(value){
+            var start=Date.parse(new Date($('[name="start"]').val()));
+            if(new Date(value)-start<0){
+              layer.msg("结束时间不能小于开始时间");
+              return;
+            }
+          }
+        });
+        form.on('submit(sreach)', function(data){
+          if(data.field.start!=""||data.field.end!=''){
+            if(data.field.start!=""&&data.field.end!=''){
+              var start=Date.parse(new Date($('[name="start"]').val()));
+              var end=Date.parse(new Date($('[name="end"]').val()));
+              if(end-start<0){
+                layer.msg("结束时间不能小于开始时间");
+                return false;
+              }
+            }
+            if(data.field.start!=""){
+              data.field.start=Date.parse(data.field.start)/1000;
+            }
+            if(data.field.end!=""){
+              data.field.end=Date.parse(data.field.end)/1000;
+            }
+          }
+          tableIns.reload({
+            where: data.field
+            ,page: {
+              curr: 1 
+            }
+          });
+          return false; 
+        });
+      })
+      function getLocalTime(nS) {  
+        if(nS==null||nS==''){
+          return '无';
+        }   
+         return new Date(parseInt(nS) * 1000).toLocaleString().replace(/:\d{1,2}$/,' ');  
+      }
+      function del(id) {
+        layer.confirm('确认要删除吗？',function(index){
+          if(state){
+            state=false;
+            $.ajax({
+              url: 'sub/notify_del',
+              type: 'post',
+              dataType: 'json',
+              data: {"id":id},
+              success:function(msg){
+                state=true;
+                if(msg.flag=="true"){
+                  layer.msg("删除成功");
+                  location.replace(location.href);
+                }else{
+                  layer.msg(msg.msg);
+                }
+              }
+            });
+          }
+        })
+      }
+      function add_recode(){
+        layer.prompt({
+          formType: 2,
+          title: '请输入发送消息',
+          area: ['530px', '150px']
+        }, function(value, index, elem){
+          if(state){
+            state=false;
+            $.ajax({
+              url: 'sub/notify_add',
+              type: 'post',
+              dataType: 'json',
+              data: {"value":value},
+              success:function(msg){
+                state=true;
+                if(msg.flag=="true"){
+                  layer.msg("发送成功",{time:1200,icon: 6},function(){
+                    location.replace(location.href);
+                  });
+                }else{
+                  layer.msg(msg.msg);
+                }
+              }
+            });
+          }
+        });
+      }
+    </script>
+  </body>
+
+</html>

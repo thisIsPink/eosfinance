@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html class="x-admin-sm">
+  
+  <head>
+    <meta charset="UTF-8">
+    <title>欢迎页面-X-admin2.1</title>
+    <link rel="stylesheet" href="__BS_CSS__/font.css">
+    <link rel="stylesheet" href="__BS_CSS__/xadmin.css">
+    <script type="text/javascript" src="__P_JS__/jquery-3.2.1.min.js"></script>
+    <script type="text/javascript" src="__BS_LAY__/layui.js" charset="utf-8"></script>
+    <script type="text/javascript" src="__BS_JS__/xadmin.js"></script>
+    <script type="text/javascript" src="__BS_JS__/cookie.js"></script>
+  </head>
+  
+  <body class="">
+    <div class="x-nav">
+      <span class="layui-breadcrumb">
+        <a href="">超级后台</a>
+        <a href="">会员管理</a>
+        <a>
+          <cite>用户邀请状况</cite></a>
+      </span>
+      <a class="layui-btn layui-btn-small" style="line-height:1.6em;margin-top:3px;float:right" href="javascript:location.replace(location.href);" title="刷新">
+        <i class="layui-icon" style="line-height:30px">ဂ</i></a>
+    </div>
+    <div class="x-body">
+      <div class="layui-row">
+        <form class="layui-form layui-col-md12 x-so">
+          <input type="text" name="name"  placeholder="id查找" autocomplete="off" class="layui-input" value="">
+          <button class="layui-btn"  lay-submit="" lay-filter="sreach"><i class="layui-icon">&#xe615;</i></button>
+        </form>
+      </div>
+      <table class="layui-table" id="user_login" lay-filter="user_login"></table>
+
+    </div>
+    <script>
+      layui.use(['table',"form"],function(){
+        var table = layui.table;
+        var form = layui.form;
+        var tableIns=table.render({
+          elem: '#user_login'
+          ,height: 420
+          ,url: '/admin/json/inviter' //数据接口
+          ,page: true //开启分页
+          ,cols: [[ //表头
+            {field: 'aid', title: '邀请人id', sort: true}
+            ,{field: 'anick', title: '邀请人昵称'}
+            ,{field: 'bid', title: '被邀请人id', sort: true}
+            ,{field: 'bnick', title: '被邀请人昵称'}
+            ,{field: 'time', title: '邀请时间',templet: '<div>{{getLocalTime(d.time)}}</div>'}
+            // ,{field: 'ip', title: '被邀请人生产收益'} 
+            // ,{field: 'state', title: '邀请人获得收益'}
+          ]]
+        });
+        form.on('submit(sreach)', function(data){
+          tableIns.reload({
+            where: data.field
+            ,page: {
+              curr: 1 
+            }
+          });
+          return false; 
+        });
+      })
+      function getLocalTime(nS) {  
+        if(nS==null||nS==''){
+          return '无';
+        }   
+         return new Date(parseInt(nS) * 1000).toLocaleString().replace(/:\d{1,2}$/,' ');     
+      }
+    </script>
+  </body>
+
+</html>

@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html class="x-admin-sm">
+  
+  <head>
+    <meta charset="UTF-8">
+    <title>欢迎页面-X-admin2.1</title>
+    <link rel="stylesheet" href="__BS_CSS__/font.css">
+    <link rel="stylesheet" href="__BS_CSS__/xadmin.css">
+    <script type="text/javascript" src="__P_JS__/jquery-3.2.1.min.js"></script>
+    <script type="text/javascript" src="__BS_LAY__/layui.js" charset="utf-8"></script>
+    <script type="text/javascript" src="__BS_JS__/xadmin.js"></script>
+    <script type="text/javascript" src="__BS_JS__/cookie.js"></script>
+  </head>
+  
+  <body class="">
+    <div class="x-nav">
+      <span class="layui-breadcrumb">
+        <a href="">超级后台</a>
+        <a href="">投标管理</a>
+        <a>
+          <cite>分利情况</cite></a>
+      </span>
+      <a class="layui-btn layui-btn-small" style="line-height:1.6em;margin-top:3px;float:right" href="javascript:location.replace(location.href);" title="刷新">
+        <i class="layui-icon" style="line-height:30px">ဂ</i></a>
+    </div>
+    <div class="x-body">
+      <div class="layui-row">
+        <form class="layui-form layui-col-md12 x-so">
+          <input type="text" name="bid" placeholder="标ID" autocomplete="off" class="layui-input">
+          <input class="layui-input"  autocomplete="off" placeholder="开始日" name="start" id="start">
+          <input class="layui-input"  autocomplete="off" placeholder="截止日" name="end" id="end">
+          <div class="layui-input-inline">
+            <select name="state">
+              <option value="">状态</option>
+              <option value="1">未付款</option>
+              <option value="2">已付款</option>
+              <option value="3">未到时间</option>
+            </select>
+          </div>
+          <button class="layui-btn"  lay-submit="" lay-filter="sreach"><i class="layui-icon">&#xe615;</i></button>
+        </form>
+      </div>
+      <table class="layui-table" id="bid_tender_record" lay-filter="bid_tender_record"></table>
+    </div>
+    <script type="text/html" id="profit_operation">
+        <a onclick="profit_ok(this,{{d.id}})" href="javascript:;"  title="{{d.state == '1' ? '未确认' : d.state == '2' ? '已确认' : d.state == '3' ? '未到时间' : '错误' }}">
+          <i class="layui-icon">
+            &#{{d.state == '1' ? 'xe659' : d.state == '2' ? 'xe605' : d.state == 3 ? 'xe60e' : 'xe607' }};
+          </i>
+        </a>
+      </script>
+    <script>
+      var state=true;
+      layui.use(['table',"form","laydate"],function(){
+        var table = layui.table;
+        var form = layui.form;
+        var laydate= layui.laydate;
+        var tableIns= table.render({
+          elem: '#bid_tender_record'
+          ,height: 420
+          ,url: 'json/profit' //数据接口
+          ,page: true //开启分页
+          ,cols: [[ //表头
+            {type: 'checkbox', fixed: 'left'}
+            ,{field: 'id', title: 'ID', sort: true}
+            ,{field: 'bid', title: '标id'}
+            ,{field: 'phase', title: '期数'}
+            ,{field: 'time', title: '时间',templet: '<div>{{getLocalTime(d.time)}}</div>'}
+            ,{field: 'money', title: '分发金额'}
+            ,{field: 'coin', title: '币种'}
+            ,{field: 'day', title: '收益天数'}
+            ,{field: 'state', title: '状态',templet: '<div>{{d.state == "1" ? "未付款" : d.state == "2" ? "已付款" : d.state == "3" ? "未到时间" : "错误"}}</div>'}
+            ,{title:'操作', toolbar: '#profit_operation'}
+          ]]
+          ,defaultToolbar: ''
+        });
+        table.on('toolbar(test)', function(obj){
+          var checkStatus = table.checkStatus(obj.config.id);
+          switch(obj.event){
+            case 'getCheckData':
+              var data = checkStatus.data;
+              layer.alert(JSON.stringify(data));
+            break;
+            case 'getCheckLength':
+              var data = checkStatus.data;
+              layer.msg('选中了：'+ data.length + ' 个');
+            break;
+            case 'isAll':
+              layer.msg(checkStatus.isAll ? '全选': '未全选')
+            break;
+          };
+        });
+        laydate.render({
+            elem: '#start', //指定元素
+            type: 'datetime'
+        });
+        laydate.render({
+          elem: '#end', //指定元素
+          type: 'datetime'
+          ,done: function(value){
+            var start=Date.parse(new Date($('[name="start"]').val()));
+            if(new Date(value)-start<0){
+              layer.msg("结束时间不能小于开始时间");
+              return;
+            }
+          }
+        });
+        form.on('submit(sreach)', function(data){
+          if(data.field.start!=""||data.field.end!=''){
+            if(data.field.start!=""&&data.field.end!=''){
+              var start=Date.parse(new Date($('[name="start"]').val()));
+              var end=Date.parse(new Date($('[name="end"]').val()));
+              if(end-start<0){
+                layer.msg("结束时间不能小于开始时间");
+                return false;
+              }
+            }
+            if(data.field.start!=""){
+              data.field.start=Date.parse(data.field.start)/1000;
+            }
+            if(data.field.end!=""){
+              data.field.end=Date.parse(data.field.end)/1000;
+            }
+          }
+          tableIns.reload({
+            where: data.field
+            ,page: {
+              curr: 1 
+            }
+          });
+          return false; 
+        });
+      })
+      function getLocalTime(nS) {  
+        if(nS==null||nS==''){
+          return '无';
+        }   
+         return new Date(parseInt(nS) * 1000).toLocaleString().replace(/:\d{1,2}$/,' ');   
+      }
+      function profit_ok(obj,id){
+        if($(obj).attr('title')=='未确认'){
+          layer.confirm('确认分发利息吗？',function(index){
+            if(state){
+              state=false;
+              $.ajax({
+                url: 'sub/profit_state_ok',
+                type: 'post',
+                dataType: 'json',
+                data: {"id": id},
+                success:function(msg){
+                  state=true;
+                  if(msg.flag=="true"){
+                    $(obj).attr('title','已确认')
+                    $(obj).find('i').html('&#xe605;');
+                    $(obj).parents("tr").find("[data-field='state'] div").html('已确认');
+                    layer.msg('修改成功!',{icon: 1,time:1000});
+                  }else{
+                    layer.msg("修改失败");
+                  }
+                }
+              });
+            }
+          });
+        }else if($(obj).attr('title')=='未到时间'){
+          layer.msg("现在还不能操作");
+        }
+      }
+    </script>
+  </body>
+
+</html>

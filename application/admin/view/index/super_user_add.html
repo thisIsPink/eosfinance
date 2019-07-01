@@ -1,0 +1,117 @@
+<html class="x-admin-sm">
+  <head>
+    <meta charset="UTF-8">
+    <title>欢迎页面-X-admin2.1</title>
+    <link rel="stylesheet" href="__BS_CSS__/font.css">
+    <link rel="stylesheet" href="__BS_CSS__/xadmin.css">
+    <script type="text/javascript" src="__P_JS__/jquery-3.2.1.min.js"></script>
+    <script type="text/javascript" src="__BS_LAY__/layui.js" charset="utf-8"></script>
+    <script type="text/javascript" src="__BS_JS__/xadmin.js"></script>
+    <script type="text/javascript" src="__BS_JS__/cookie.js"></script>
+  </head>
+  
+  <body>
+    <div class="x-body">
+      <div class="layui-row">
+        <form class="layui-form layui-col-md12 x-so" >
+          <input type="text" name="id" placeholder="请输入ID" autocomplete="off" class="layui-input" value="">
+          <input type="text" name="name"  placeholder="请输入用户名" autocomplete="off" class="layui-input" value="">
+          <input type="text" name="phone"  placeholder="请输入用户电话" autocomplete="off" class="layui-input" value="">
+          <input type="text" name="email"  placeholder="请输入用户邮箱" autocomplete="off" class="layui-input" value="">
+          <button class="layui-btn"  lay-submit="" lay-filter="sreach"><i class="layui-icon">&#xe615;</i></button>
+        </form>
+      </div>
+    <table id="member_list" lay-filter="member_list" class="layui-table x-admin" style="margin-top:0"></table>
+    <script type="text/html" id="member_bar">
+      <a onclick="select(this,{{d.id}})" href="javascript:;" class="layui-btn">选择</a>
+    </script>
+    </div>
+    <script>
+      layui.use(['table','form'],function(){
+        var table = layui.table;
+        var laydate = layui.laydate;
+        var form = layui.form;
+        var tableIns=table.render({
+          elem: '#member_list'
+          ,height: 420
+          ,url: 'json/user?state=2' //数据接口
+          ,page: true //开启分页
+          ,cols: [[ //表头
+            {field: 'id', title: 'ID',  sort: true, fixed: 'left'}
+            ,{field: 'account', title: 'EOS账号'}
+            ,{field: 'phone', title: '电话'}
+            ,{field: 'email', title: '邮箱'} 
+            ,{fixed: 'right', title:'操作', toolbar: '#member_bar'}
+          ]]
+        });
+        form.on('submit(sreach)', function(data){
+          tableIns.reload({
+            where: data.field
+            ,page: {
+              curr: 1 
+            }
+          });
+          return false; 
+        });
+      })
+       /*用户-停用*/
+      function select(obj,id){
+        layer.confirm('确认要选择该用户吗？',function(index){
+          $.ajax({
+            url: 'sub/super_add',
+            type: 'post',
+            dataType: 'json',
+            data: {"id": id},
+            success:function(msg){
+              if(msg.flag=="true"){
+                layer.alert("增加成功", {icon: 6},function () {
+                    // 获得frame索引
+                  var index = parent.layer.getFrameIndex(window.name);
+                  //关闭当前frame
+                  parent.layer.close(index);
+                  x_admin_father_reload();
+                });
+              }else{
+                layer.msg(msg.msg);
+              }
+            }
+          })
+          .done(function() {
+            console.log("success");
+          })
+          .fail(function() {
+            console.log("error");
+          })
+          .always(function() {
+            console.log("complete");
+          });
+          
+        })
+      }
+      function getLocalTime(nS) {  
+        if(nS==null||nS==''){
+          return '无';
+        }   
+         return new Date(parseInt(nS) * 1000).toLocaleString().replace(/:\d{1,2}$/,' ');  
+      }
+      function info_money(arr){
+        var str='';
+        for(var i=0;i<arr.length;i++){
+          for(key in arr[i]){
+            str+='<tr><td>'+key+'</td><td>'+arr[i][key]+'</td></tr>'            
+          }
+        }
+        $("#tool_table tbody").html(str);
+        layui.use('layer', function(){
+          var layer = layui.layer;
+          
+          layer.open({
+            type: 1, 
+            content: $('#tool_table')
+          });
+        });        
+      }
+    </script>
+  </body>
+
+</html>

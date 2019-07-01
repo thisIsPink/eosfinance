@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html class="x-admin-sm">
+  
+  <head>
+    <meta charset="UTF-8">
+    <title></title>
+    <link rel="stylesheet" href="__BS_CSS__/font.css">
+    <link rel="stylesheet" href="__BS_CSS__/xadmin.css">
+    <script type="text/javascript" src="__P_JS__/jquery-3.2.1.min.js"></script>
+    <script type="text/javascript" src="__BS_LAY__/layui.js" charset="utf-8"></script>
+    <script type="text/javascript" src="__BS_JS__/xadmin.js"></script>
+    <script type="text/javascript" src="__BS_JS__/cookie.js"></script>
+  </head>
+  
+  <body>
+    <div class="x-body">
+      <form class="layui-form">
+        <div class="layui-form-item">
+          <div class="layui-inline">
+            <label class="layui-form-label">
+              <span class="x-red">*</span>标题
+            </label>
+            <div class="layui-input-inline">
+               <input type="text" id="title" name="title" required="" lay-verify="required" autocomplete="off" class="layui-input">
+            </div>
+          </div>
+        </div>
+        <div class="layui-form-item">
+          <div class="layui-inline">
+            <label class="layui-form-label">
+              <span class="x-red">*</span>摘要
+            </label>
+            <div class="layui-input-inline">
+               <input type="text" id="abstract" name="abstract" required="" lay-verify="required" autocomplete="off" class="layui-input">
+            </div>
+          </div>
+        </div>
+        <div class="layui-form-item">
+          <label class="layui-form-label"><span class="x-red">*</span>类型</label>
+          <div class="layui-input-block">
+            <input type="radio" name="type" value="1" title="系统公告">
+            <input type="radio" name="type" value="2" title="网站公告" checked>
+          </div>
+        </div>
+        <div class="layui-form-item">
+          <label for="L_pass" class="layui-form-label">
+            <span class="x-red">*</span>正文内容
+          </label>
+          <div class="layui-input-inline" style="width: 720px">
+            <textarea id="content" style="display: none;"></textarea>
+          </div>
+        </div>
+        <div class="layui-form-item">
+          <label for="L_repass" class="layui-form-label">
+          </label>
+          <button  class="layui-btn" lay-filter="add" lay-submit="">添加</button>
+        </div>
+      </form>
+    </div>
+    <script>
+      var coin=null;
+      var state=true;
+      layui.use(['form','layer','layedit'], function(){
+        var form = layui.form
+        ,layer = layui.layer
+        ,layedit = layui.layedit;
+
+        var buile_content=layedit.build('content');
+          //监听提交
+        form.on('submit(add)', function(data){
+          var obj=data.field;
+          obj.content=layedit.getContent(buile_content);
+          if(state){
+            state=false;
+            $.ajax({
+              url: '<{:url("sub/notice_add")}>',
+              type: 'post',
+              dataType: 'json',
+              data: obj,
+              success:function(msg){
+                if(msg.flag=="true"){
+                  layer.alert("增加成功", {icon: 6},function () {
+                    // 获得frame索引
+                    var index = parent.layer.getFrameIndex(window.name);
+                    //关闭当前frame
+                    parent.layer.close(index);
+                    x_admin_father_reload();
+                  });
+                }else{
+                  layer.msg(msg.msg);
+                }
+              }
+            });
+          }
+          return false;
+        });
+      });
+    </script>
+  </body>
+
+</html>

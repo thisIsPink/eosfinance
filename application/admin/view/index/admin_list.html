@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html class="x-admin-sm">
+  
+  <head>
+    <meta charset="UTF-8">
+    <title>欢迎页面-X-admin2.1</title>
+    <link rel="stylesheet" href="__BS_CSS__/font.css">
+    <link rel="stylesheet" href="__BS_CSS__/xadmin.css">
+    <script type="text/javascript" src="__P_JS__/jquery-3.2.1.min.js"></script>
+    <script type="text/javascript" src="__BS_LAY__/layui.js" charset="utf-8"></script>
+    <script type="text/javascript" src="__BS_JS__/xadmin.js"></script>
+    <script type="text/javascript" src="__BS_JS__/cookie.js"></script>
+  </head>
+  
+  <body>
+    <div class="x-nav">
+      <span class="layui-breadcrumb">
+        <a href="">超级后台</a>
+        <a href="">管理员管理</a>
+        <a>
+          <cite>管理员列表</cite></a>
+      </span>
+      <a class="layui-btn layui-btn-small" style="line-height:1.6em;margin-top:3px;float:right" href="javascript:location.replace(location.href);" title="刷新">
+        <i class="layui-icon" style="line-height:30px">ဂ</i></a>
+    </div>
+    <div class="x-body">
+      <div class="layui-row">
+        <form class="layui-form layui-col-md12 x-so">
+          <input type="text" name="username"  placeholder="请输入用户名" autocomplete="off" class="layui-input">
+          <button class="layui-btn"  lay-submit="" lay-filter="sreach"><i class="layui-icon">&#xe615;</i></button>
+        </form>
+      </div>
+      <xblock>
+        <button class="layui-btn" onclick="x_admin_show('添加用户','admin_add')"><i class="layui-icon"></i>添加</button>
+      </xblock>
+      <table class="layui-table" id="admin_list" lay-filter="admin_list"></table>
+      <script type="text/html" id="admin_bar">
+        <a onclick="member_stop(this,{{d.id}})" href="javascript:;"  title="{{d.state == '1' ? '启用' : '停用' }}">
+          <i class="layui-icon">
+            &#{{d.state == '1' ? 'xe601' : 'xe62f' }};
+          </i>
+        </a>
+        <a title="删除" onclick="member_del(this,{{d.id}})" href="javascript:;">
+          <i class="layui-icon">&#xe640;</i>
+        </a>
+      </script>
+      <script type="text/html" id="admin_state">
+        <span class="layui-btn layui-btn-normal layui-btn-mini {{d.state == '1' ? '' : 'layui-btn-disabled' }}">{{d.state == '1' ? '已启用' : '已停用' }}</span>
+      </script>
+    </div>
+    <script>
+      layui.use(['table','form'],function(){
+        var table = layui.table;
+        var form = layui.form;
+        var tableIns=table.render({
+          elem: '#admin_list'
+          ,height: 420
+          ,url: 'json/admin_list' //数据接口
+          ,page: true //开启分页
+          ,cols: [[ //表头
+            {field: 'id', title: '用户ID', sort: true, }
+            ,{field: 'name', title: '账号名'}
+            // ,{field: 'time', title: '时间',templet: '<div>{{getLocalTime(d.time)}}</div>'}
+            ,{field: 'role', title: '身份'}
+            ,{field: 'ip', title: '上次登陆IP地址'}
+            ,{field: 'state', title: '状态',toolbar:'#admin_state', width: 135}
+            ,{fixed: 'right', title:'操作', toolbar: '#admin_bar'}
+          ]]
+        });
+        form.on('submit(sreach)', function(data){
+          tableIns.reload({
+            where: data.field
+            ,page: {
+              curr: 1 
+            }
+          });
+          return false; 
+        });
+      })
+       /*用户-停用*/
+      function member_stop(obj,id){
+          
+        if($(obj).attr('title')=='启用'){
+          layer.confirm('确认要停用吗？',function(index){
+            $.ajax({
+              url: 'sub/admin_state_down',
+              type: 'post',
+              dataType: 'json',
+              data: {"id": id},
+              success:function(msg){
+                if(msg.flag=="true"){
+                  $(obj).attr('title','停用')
+                  $(obj).find('i').html('&#xe62f;');
+
+                  $(obj).parents("tr").find("[data-field='state']").find('span').addClass('layui-btn-disabled').html('已停用');
+                  layer.msg('已停用!',{icon: 5,time:1000});
+                }else{
+                  layer.msg("修改失败");
+                }
+              }
+            });
+          });
+        }else{
+          layer.confirm('确认要启用吗？',function(index){
+            $.ajax({
+              url: 'sub/admin_state_up',
+              type: 'post',
+              dataType: 'json',
+              data: {"id": id},
+              success:function(msg){
+                if(msg.flag=="true"){
+                  $(obj).attr('title','启用')
+                  $(obj).find('i').html('&#xe601;');
+
+                  $(obj).parents("tr").find("[data-field='state']").find('span').removeClass('layui-btn-disabled').html('已启用');
+                  layer.msg('已启用!',{icon: 1,time:1000});
+                }else{
+                  layer.msg("修改失败");
+                }
+              }
+            });
+          });
+        }
+              
+          
+      }
+
+      /*用户-删除*/
+      function member_del(obj,id){
+          layer.confirm('确认要删除吗？',function(index){
+              //发异步删除数据
+              $.ajax({
+                url: 'sub/admin_del',
+                type: 'post',
+                dataType: 'json',
+                data: {"id": id},
+                success:function(msg){
+                  if(msg.flag=="true"){
+                    $(obj).parents("tr").remove();
+                    layer.msg('已删除!',{icon:1,time:1000});
+                  }else{
+                    layer.msg("删除失败");
+                  }
+                }
+              });
+              
+          });
+      }
+
+
+
+      function delAll (argument) {
+
+        var data = tableCheck.getData();
+  
+        layer.confirm('确认要删除吗？'+data,function(index){
+            //捉到所有被选中的，发异步进行删除
+            layer.msg('删除成功', {icon: 1});
+            $(".layui-form-checked").not('.header').parents('tr').remove();
+        });
+      }
+    </script>
+  </body>
+
+</html>

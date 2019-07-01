@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html class="x-admin-sm">
+  
+  <head>
+    <meta charset="UTF-8">
+    <title>欢迎页面-X-admin2.1</title>
+    <link rel="stylesheet" href="__BS_CSS__/font.css">
+    <link rel="stylesheet" href="__BS_CSS__/xadmin.css">
+    <script type="text/javascript" src="__P_JS__/jquery-3.2.1.min.js"></script>
+    <script type="text/javascript" src="__BS_LAY__/layui.js" charset="utf-8"></script>
+    <script type="text/javascript" src="__BS_JS__/xadmin.js"></script>
+    <script type="text/javascript" src="__BS_JS__/cookie.js"></script>
+  </head>
+  
+  <body class="">
+    <div class="x-nav">
+      <span class="layui-breadcrumb">
+        <a href="">超级后台</a>
+        <a href="">投标管理</a>
+        <a>
+          <cite>还款管理</cite></a>
+      </span>
+      <a class="layui-btn layui-btn-small" style="line-height:1.6em;margin-top:3px;float:right" href="javascript:location.replace(location.href);" title="刷新">
+        <i class="layui-icon" style="line-height:30px">ဂ</i></a>
+    </div>
+    <div class="x-body">
+      <div class="layui-row">
+        <form class="layui-form layui-col-md12 x-so">
+          <input class="layui-input"  autocomplete="off" placeholder="开始日" name="start" id="start">
+          <input class="layui-input"  autocomplete="off" placeholder="截止日" name="end" id="end">
+          <button class="layui-btn"  lay-submit="" lay-filter="sreach"><i class="layui-icon">&#xe615;</i></button>
+        </form>
+      </div>
+      <table class="layui-table" id="bid_tender_record" lay-filter="bid_tender_record"></table>
+    </div>
+    <script type="text/html" id="profit_operation">
+        <a onclick="profit_ok(this,{{d.id}})" href="javascript:;"  title="{{d.state == '8' ? '未付款' : d.state == '4' ? '已支付' : '错误' }}">
+          <i class="layui-icon">
+            &#{{d.state == '8' ? 'xe659' : d.state == '4' ? 'xe605' : 'xe607' }};
+          </i>
+        </a>
+      </script>
+    <script>
+      var state=true;
+      layui.use(['table',"form","laydate"],function(){
+        var table = layui.table;
+        var laydate= layui.laydate;
+        var form = layui.form;
+        var tableIns=table.render({
+          elem: '#bid_tender_record'
+          ,height: 400
+          ,url: 'json/repay' //数据接口
+          ,page: true //开启分页
+          ,cols: [[ //表头
+            {type: 'checkbox', fixed: 'left'}
+            ,{field: 'id', title: '标ID', sort: true,width:80}
+            ,{field: 'rtime', title: '还款时间',templet: '<div>{{getLocalTime(d.rtime)}}</div>'}
+            ,{field: 'tmoney', title: '投标总额'}
+            ,{field: 'coin', title: '需求币种'}
+            ,{field: 'pmoney', title: '分发利息金额'}
+            ,{field: 'icoin', title: '利息币种'}
+            ,{field: 'state', title: '状态',templet: '<div><span>{{d.state == "8" ? "未付款" : d.state == "4" ? "已付款" : "错误"}}</span></div>'}
+            ,{title:'操作', toolbar: '#profit_operation'}
+          ]]
+          ,defaultToolbar: ''
+        });
+        table.on('toolbar(test)', function(obj){
+          var checkStatus = table.checkStatus(obj.config.id);
+          switch(obj.event){
+            case 'getCheckData':
+              var data = checkStatus.data;
+              layer.alert(JSON.stringify(data));
+            break;
+            case 'getCheckLength':
+              var data = checkStatus.data;
+              layer.msg('选中了：'+ data.length + ' 个');
+            break;
+            case 'isAll':
+              layer.msg(checkStatus.isAll ? '全选': '未全选')
+            break;
+          };
+        });
+        laydate.render({
+            elem: '#start', //指定元素
+            type: 'datetime'
+        });
+        laydate.render({
+          elem: '#end', //指定元素
+          type: 'datetime'
+          ,done: function(value){
+            var start=Date.parse(new Date($('[name="start"]').val()));
+            if(new Date(value)-start<0){
+              layer.msg("结束时间不能小于开始时间");
+              return;
+            }
+          }
+        });
+        form.on('submit(sreach)', function(data){
+          if(data.field.start!=""||data.field.end!=''){
+            if(data.field.start!=""&&data.field.end!=''){
+              var start=Date.parse(new Date($('[name="start"]').val()));
+              var end=Date.parse(new Date($('[name="end"]').val()));
+              if(end-start<0){
+                layer.msg("结束时间不能小于开始时间");
+                return false;
+              }
+            }
+            if(data.field.start!=""){
+              data.field.start=Date.parse(data.field.start)/1000;
+            }
+            if(data.field.end!=""){
+              data.field.end=Date.parse(data.field.end)/1000;
+            }
+          }
+          tableIns.reload({
+            where: data.field
+            ,page: {
+              curr: 1 
+            }
+          });
+          return false; 
+        });
+      })
+      function getLocalTime(nS) {  
+        if(nS==null||nS==''){
+          return '无';
+        }   
+         return new Date(parseInt(nS) * 1000).toLocaleString().replace(/:\d{1,2}$/,' ');   
+      }
+      function profit_ok(obj,id){
+        if(state){
+          state=false;
+          if($(obj).attr('title')=='未付款'){
+            layer.confirm('确认还款吗？',function(index){
+              $.ajax({
+                url: 'sub/repay_state_ok',
+                type: 'post',
+                dataType: 'json',
+                data: {"id": id},
+                success:function(msg){
+                  state=true;
+                  if(msg.flag=="true"){
+                    $(obj).attr('title','已付款')
+                    $(obj).find('i').html('&#xe605;');
+                    $(obj).parents("td").prev().children('div').find('span').html('已付款');
+                    layer.msg('修改成功!',{icon: 1,time:1000});
+                  }else{
+                    layer.msg("修改失败");
+                  }
+                }
+              });
+            });
+          }
+        }
+      }
+    </script>
+  </body>
+</html>
