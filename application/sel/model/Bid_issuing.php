@@ -32,5 +32,8 @@ class Bid_issuing extends Model{
 			return false;
 		}
 	}
+	public function title($id){
+	    return db('bid_issuing')->field('title')->where('Id',$id)->find();
+    }
 }
 ?>

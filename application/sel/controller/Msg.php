@@ -477,6 +477,7 @@ class Msg extends Controller{
     }
     //用户投标例时记录
     public function his_record($user_id,$time){
+	    $bid=new Bid_issuing();
     	$lt=new Log_transaction;
     	$lr=new Log_real;
     	$company=new Company;
@@ -488,15 +489,18 @@ class Msg extends Controller{
     	foreach ($lt_data as $key => $value) {
     		switch ($lt_data[$key]["type"]) {
     			case '1':
+                    $lt_data[$key]['title']=$bid->title(json_decode($lt_data[$key]['remarks'],true)['bid']);
     				$lt_data[$key]["type"]="投标";
     				$lt_data[$key]["symbol"]=false;
     				break;
     			case '2':
-    				$lt_data[$key]["type"]="回本";
+                    $lt_data[$key]['title']=$bid->title(json_decode($lt_data[$key]['remarks'])['bid']);
+    				$lt_data[$key]["type"]="投资本金";
     				$lt_data[$key]["symbol"]=true;
     				break;
     			case '3':
-    				$lt_data[$key]["type"]="分利";
+                    $lt_data[$key]['title']=$bid->title(json_decode($lt_data[$key]['remarks'])['bid']);
+    				$lt_data[$key]["type"]="投资收益";
     				$lt_data[$key]["symbol"]=true;
     				break;
     			case '4':
@@ -546,13 +550,13 @@ class Msg extends Controller{
     			if($lt_num==count($lt_data)){
     				break;
     			}
-    			$data[]=["type"=>$lt_data[$lt_num]["type"],"time"=>$lt_data[$lt_num]["time"],"state"=>"已完成","coin"=>$lt_data[$lt_num]["coin"],"money"=>num_point($lt_data[$lt_num]["money"],4),"symbol"=>$lt_data[$lt_num]["symbol"]];
+    			$data[]=["type"=>$lt_data[$lt_num]["type"],"time"=>$lt_data[$lt_num]["time"],"state"=>"已完成","coin"=>$lt_data[$lt_num]["coin"],"money"=>num_point($lt_data[$lt_num]["money"],4),"symbol"=>$lt_data[$lt_num]["symbol"],'title'=>$lt_data[$lt_num]["title"]];
     			$lt_num++;
     		}
     	}else{
 	    	for($i=0;$i<20;$i++){
 	    		if($lt_data[$lt_num]["time"]>$lr_data[$lr_num]["time"]){
-	    			$data[]=["type"=>$lt_data[$lt_num]["type"],"time"=>$lt_data[$lt_num]["time"],"state"=>"已完成","coin"=>$lt_data[$lt_num]["coin"],"money"=>num_point($lt_data[$lt_num]["money"],4),"symbol"=>$lt_data[$lt_num]["symbol"]];
+	    			$data[]=["type"=>$lt_data[$lt_num]["type"],"time"=>$lt_data[$lt_num]["time"],"state"=>"已完成","coin"=>$lt_data[$lt_num]["coin"],"money"=>num_point($lt_data[$lt_num]["money"],4),"symbol"=>$lt_data[$lt_num]["symbol"],'title'=>$lt_data[$lt_num]["title"]];
 	    			if($lt_num+1<count($lt_data)){
 	    				$lt_num++;
 	    			}else{
@@ -567,7 +571,7 @@ class Msg extends Controller{
 	    				$lr_num++;
 	    			}else{
 	    				for($j=$lt_num;$j<20,$j<count($lt_data);$j++){
-	    					$data[]=["type"=>$lt_data[$j]["type"],"time"=>$lt_data[$j]["time"],"state"=>"已完成","coin"=>$lt_data[$j]["coin"],"money"=>num_point($lt_data[$j]["money"],4),"symbol"=>$lt_data[$j]["symbol"]];
+	    					$data[]=["type"=>$lt_data[$j]["type"],"time"=>$lt_data[$j]["time"],"state"=>"已完成","coin"=>$lt_data[$j]["coin"],"money"=>num_point($lt_data[$j]["money"],4),"symbol"=>$lt_data[$j]["symbol"],'title'=>$lt_data[$lt_num]["title"]];
 	    				}
 	    				break;
 	    			}

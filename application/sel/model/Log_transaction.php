@@ -29,7 +29,7 @@ class Log_transaction extends Model{
 	}
 	//交易记录
 	public function user_log($user,$time){
-		return db("log_transaction")->alias("lt")->join("coin c","lt.coin=c.Id")->field("lt.type,lt.time,lt.money,c.name coin")->where("user",$user)->where("time","<",$time)->limit(20)->order("time","desc")->select();
+		return db("log_transaction")->alias("lt")->join("coin c","lt.coin=c.Id")->field("lt.type,lt.time,lt.money,c.name coin,remarks")->where("user",$user)->where("time","<",$time)->limit(20)->order("time","desc")->select();
 	}
 	//添加记录
 	public function add($data){

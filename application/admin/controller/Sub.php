@@ -1029,7 +1029,7 @@ class Sub extends Controller{
 					}
 					$user_money[$bid["coin"]]["money"]-=$use_money;
 					db('user')->where("Id",$value["Id"])->update(["money"=>json_encode($user_money)]);
-					db("log_transaction")->insert(["type"=>"1","user"=>$value["Id"],"remarks"=>"自动投标","time"=>time(),"money"=>$use_money,"coin"=>$bid["coin_id"]]);
+					db("log_transaction")->insert(["type"=>"1","user"=>$value["Id"],"remarks"=>json_encode(['action'=>'自动投标','bid'=>$bid_id]),"time"=>time(),"money"=>$use_money,"coin"=>$bid["coin_id"]]);
 					db("tender_record")->insert(["user_id"=>$value["Id"],"bid_id"=>$bid_id,"time"=>time(),"money"=>$use_money,"coin_id"=>$bid["coin_id"],"state"=>'1']);
 					$total-=$use_money;
 					if($total==0){
@@ -1066,7 +1066,7 @@ class Sub extends Controller{
 	            $user_money=balance($value["u_inv_id"]);
 	            $user_money[coin_transformation($value["coin"],true)]["money"]+=$money;
 	            db("user")->where("Id",$value["u_inv_id"])->update(["money"=>json_encode($user_money)]);
-	            db("log_transaction")->insert(["type"=>"4","remarks"=>"标分利","time"=>time(),"money"=>$money,"coin"=>$value["coin"],"user"=>$value["u_inv_id"]]);
+	            db("log_transaction")->insert(["type"=>"4","remarks"=>json_decode(['action'=>'标分利','bid'=>$bid,'in_user'=>$value["u_id"]]),"time"=>time(),"money"=>$money,"coin"=>$value["coin"],"user"=>$value["u_inv_id"]]);
 	        }
 	    }
 	}
@@ -1081,7 +1081,7 @@ class Sub extends Controller{
             $add_money=num_point($value["money"]*$bid_info["propor"]*$bid_info["annual"]/100/360*$day,$bid_info["smallest_unit"]);
             $user_money[$bid_info["name"]]["money"]+=$add_money;
             db("user")->where("Id",$value["user_id"])->update(["money"=>json_encode($user_money)]);
-            db("log_transaction")->insert(["type"=>"3","remarks"=>"标分利","time"=>time(),"money"=>$add_money,"coin"=>$bid_info["id"],"user"=>$value["user_id"]]);
+            db("log_transaction")->insert(["type"=>"3","remarks"=>json_encode(['action'=>'标分利','bid'=>$bid]),"time"=>time(),"money"=>$add_money,"coin"=>$bid_info["id"],"user"=>$value["user_id"]]);
             //邀请人分利
 
             //当前人
@@ -1099,7 +1099,7 @@ class Sub extends Controller{
 				//没有产生过收益及不是超级邀请人收益
 				$first_money=$add_money*$income["first"]/100;
 				db("bonus")->insert(["user"=>$inv_user["Id"],"in_user"=>$inv_in_user["Id"],'cause'=>"1","money"=>$first_money,"bid"=>$bid,"time"=>time(),"coin"=>$bid_info["id"]]);
-				db("log_transaction")->insert(["type"=>"4","remarks"=>"好友分利","time"=>time(),"money"=>$first_money,"coin"=>$bid_info["id"],"user"=>$inv_user["Id"]]);
+				db("log_transaction")->insert(["type"=>"4","remarks"=>json_encode(['action'=>'好友分利','bid'=>$bid,'in_user'=>$inv_user["Id"]]),"time"=>time(),"money"=>$first_money,"coin"=>$bid_info["id"],"user"=>$inv_user["Id"]]);
 				$first_user_money=balance($inv_user["Id"]);
 				$first_user_money[$bid_info["name"]]["money"]+=num_point($first_money,$bid_info["smallest_unit"]);
 				db("user")->where("Id",$inv_user["Id"])->update(["money"=>json_encode($first_user_money)]);
@@ -1108,7 +1108,7 @@ class Sub extends Controller{
 					$second_user=db("user")->where("Id",$inv_user["inviter"])->find();
 					$second_money=$first_money*$income["second"]/100;
 					db("bonus")->insert(["user"=>$second_user["Id"],"in_user"=>$inv_user["Id"],'cause'=>"2","money"=>$second_money,"bid"=>$bid,"time"=>time(),"coin"=>$bid_info["id"]]);
-					db("log_transaction")->insert(["type"=>"4","remarks"=>"好友分利","time"=>time(),"money"=>$second_money,"coin"=>$bid_info["id"],"user"=>$second_user["Id"]]);
+					db("log_transaction")->insert(["type"=>"4","remarks"=>json_encode(['action'=>'好友分利','bid'=>$bid,'in_user'=>$inv_user["Id"]]),"time"=>time(),"money"=>$second_money,"coin"=>$bid_info["id"],"user"=>$second_user["Id"]]);
 					$second_user_money=balance($second_user["Id"]);
 					$second_user_money[$bid_info["name"]]["money"]+=num_point($second_money,$bid_info["smallest_unit"]);
 					db("user")->where("Id",$second_user["Id"])->update(["money"=>json_encode($second_user_money)]);
@@ -1123,7 +1123,7 @@ class Sub extends Controller{
 			$user_money=balance($value["user_id"]);
 			$user_money[$value["coin"]]["money"]+=$value["money"];
 			db("user")->where("Id",$value["user_id"])->update(["money"=>json_encode($user_money)]);
-			db("log_transaction")->insert(["type"=>"2","remarks"=>"返还投资金额","time"=>time(),"money"=>$value["money"],"coin"=>$value["coin_id"],"user"=>$value["user_id"]]);
+			db("log_transaction")->insert(["type"=>"2","remarks"=>json_encode(['action'=>"返还投资金额",'bid'=>$bid]),"time"=>time(),"money"=>$value["money"],"coin"=>$value["coin_id"],"user"=>$value["user_id"]]);
 			db('tender_record')->where('Id',$bid)->update(['state'=>'3']);
 		}
 	}

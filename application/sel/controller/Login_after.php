@@ -174,7 +174,7 @@ class Login_after extends Controller{
 			return false;
 		}
 		$tender->add($data);
-		$lt->add(["type"=>"1","user"=>$user_id,"remarks"=>"投标","time"=>time(),"money"=>$money,"coin"=>$coin_id]);
+		$lt->add(["type"=>"1","user"=>$user_id,"remarks"=>json_encode(['action'=>'投标','bid'=>$bids]),"time"=>time(),"money"=>$money,"coin"=>$coin_id]);
       	if($sel_bid["reised"]+$money==$sel_bid["total"]){
             //超级受益人收益
             $this->super_inv($bids);
@@ -326,7 +326,7 @@ class Login_after extends Controller{
 	            $user_money=balance($value["user_id"]);
 	            $user_money[coin_transformation($bid_info["coin"],true)]["money"]+=$money;
 	            db("user")->where("Id",$value["user_id"])->update(["money"=>json_encode($user_money)]);
-	            db("log_transaction")->insert(["type"=>"4","remarks"=>"标分利","time"=>time(),"money"=>$money,"coin"=>$bid_info["coin"],"user"=>$value["user_id"]]);
+	            db("log_transaction")->insert(["type"=>"4","remarks"=>json_encode(['action'=>"标分利",'bid'=>$bid,'in_user'=>$value['u_id']]),"time"=>time(),"money"=>$money,"coin"=>$bid_info["coin"],"user"=>$value["user_id"]]);
 	        }
 	    }
 	}
